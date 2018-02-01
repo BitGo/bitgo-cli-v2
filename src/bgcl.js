@@ -312,34 +312,26 @@ BGCL.prototype.handleLogin = co(function *handleLogin(opts) {
 // Check if current session is using a long lived token and warn user if true
 // Used to prevent a user from changing or possibly invalidating (in the case
 // of a call to logout) the long-lived token.
-BGCL.prototype.checkAndWarnOfLongLivedTokenChange = function(input, warning) {
-  return this.bitgo.session()
-    .then(function(res) {
-      if (_.includes(_.keys(res), 'label')) {
-        console.log(warning);
-        return input.getVariable('confirm', 'Type \'go\' to confirm: ')()
-          .then(function() {
-            if (input.confirm !== 'go') {
-              throw new Error('cancelling method call');
-            }
-          });
-      }
-    });
-};
+BGCL.prototype.checkAndWarnOfLongLivedTokenChange = co(function *(opts, warning) {
+  const res = yield opts.bitgo.session();
+  if (_.includes(_.keys(res), 'label')) {
+    console.log(warning);
+    const input = new UserInput(opts.args);
+    yield input.getVariable('confirm', 'Type ' + '\'go\''.bold + ' to confirm: ')();
+    if (input.confirm !== 'go') {
+      throw new Error('Cancelling'.bold.red);
+    }
+  }
+});
 
-BGCL.prototype.handleLogout = function(opts) {
+BGCL.prototype.handleLogout = co(function *(opts) {
   const env = opts.bitgo.getEnv();
-  const input = new UserInput(opts.args);
-  return this.checkAndWarnOfLongLivedTokenChange(input, 'About to logout of a session with a longed-lived access token!\n' +
-    'This will invalidate the long-lived access token, making it unusable in the future\n')
-    .then(function() {
-      return opts.bitgo.logout();
-    })
-    .then(function() {
-      opts.session.clear(env);
-      console.log('Logged out'.bold);
-    });
-};
+  yield this.checkAndWarnOfLongLivedTokenChange(opts, 'About to logout of a session with a longed-lived access token!\n' +
+    'This will invalidate the long-lived access token, making it unusable in the future\n');
+  yield opts.bitgo.logout();
+  opts.session.clear(env);
+  console.log('Logged out'.bold);
+});
 
 BGCL.prototype.handleToken = co(function *(opts) {
   // If no token set, display current one
@@ -419,11 +411,10 @@ BGCL.prototype.run = co(function *(args) {
 
   return Promise.try(function() {
     return self.runCommandHandler(opts);
-
   })
-    .catch(function(err) {
-      console.error(err);
-    });
+  .catch(function(err) {
+    console.error(err);
+  });
 });
 
 

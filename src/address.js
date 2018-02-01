@@ -46,8 +46,6 @@ AddressCommands.prototype.handleAddressList = co(function *(opts) {
   let prevId; // used to query for next batch of wallets
   const self = this;
 
-  // const prev = yield self.fetchAddressBatch(opts, coin, wallet, limit, prevId, offset);
-
   const internalFetchAddresses = co(function *(str, key) {
     if (key.name !== 'space') {
       opts.eventEmitter.emit('myExit');

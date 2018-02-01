@@ -5,7 +5,7 @@ Command line interface for our v2 api.
 
 # Overview
 
-This command line tool is used to interact with out v2 api in your native command line program. You can use it to view information on your wallets, view balances, send from a wallet to an address and more. Examples will be provided below.
+This command line tool is used to interact with our v2 api in your native command line program. You can use it to view information on your wallets, view balances, send from a wallet to an address and more. Examples will be provided below.
 
 # Testnet
 
@@ -97,7 +97,7 @@ short | long | description
 
 
 ```bash
-$ bg login -u example@bitgo.com -p ********* -o 000000
+$ bg login -u example@bitgo.com -p ********* -o 0000000
 ```
 
 #### Logout
@@ -282,14 +282,14 @@ Use this command to unlock the current session wallet to allow spending funds wi
 $ bg wallet lock
 ```
 
-Use this command to lock the current session wallet so funds cant leave the wallet until another unlock
+Use this command to lock the current session wallet so funds can't leave the wallet until another unlock.
 
 #### freeze
 ```bash
 $ bg wallet freeze -d 100
 ```
 
-Use this command to freeze current session wallet so funds cant leave the wallet until the freeze is over
+Use this command to freeze current session wallet so funds can't leave the wallet until the freeze is over.
 
 There are also additional flags you can pass in.
 
@@ -474,7 +474,7 @@ short | long | description
 $ bg address newaddress
 ```
 
-It will print a list of addresses for the current session wallet.
+It will create a new recieve address on the current session wallet.
 
 ```json
 {
