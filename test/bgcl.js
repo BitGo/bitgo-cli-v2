@@ -33,7 +33,6 @@ describe('Base Functions:', function() {
     .get('/api/v1/user/me')
     .reply(200, nockUtils.getLoginResponse);
 
-
   }));
 
   beforeEach(function () {
@@ -50,19 +49,19 @@ describe('Base Functions:', function() {
     stdout.should.startWith('Error: potatocoin is an invalid cointype for selected environment -> mock');
   }));
 
-  it('should fail if you select a a coin in the wrong env (not testnet for mock)', co(function *() {
+  it('should fail if you select a coin in the wrong env (not testnet for mock)', co(function *() {
     yield cl.run(['coin', 'btc']);
 
     stdout.should.startWith('Error: btc is an invalid cointype for selected environment -> mock');
   }));
 
-  it('should succed to set the session coin', co(function *() {
+  it('should succeed to set the session coin', co(function *() {
     yield cl.run(['coin', 'tltc']);
 
     stdout.should.equal('Session coin set to: tltc\n');
   }));
 
-  it('should print that the user loged in', co(function *() {
+  it('should print that the user logged in', co(function *() {
     nock(nockUtils.baseUrl)
     .post('/api/v1/user/login', { email: 'tester@bitgo.com', password: '275e3c4197b13c5439eaf20fb2de7899b3fbc164499af287110fa7058709127a', forceSMS: false, otp: '0000000' })
     .reply(200, nockUtils.getLoginResponse);
@@ -72,7 +71,7 @@ describe('Base Functions:', function() {
     stdout.should.equal('Logged in as tester@bitgo.com from 127.0.0.1\n');
   }));
 
-  it('should print that the user loged in', co(function *() {
+  it('should print that the user logged out', co(function *() {
     nock(nockUtils.baseUrl)
     .get('/api/v1/user/logout')
     .reply(200, {});
@@ -85,6 +84,4 @@ describe('Base Functions:', function() {
 
     stdout.should.equal('Logged out\n');
   }));
-
-
 });

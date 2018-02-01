@@ -56,7 +56,7 @@ describe('Wallets:', function() {
     nock.cleanAll();
   });
 
-  it('should fail if you do not pass in the wallet info', co(function *() {
+  it('should fail if you do not pass in the wallet id', co(function *() {
     yield cl.run(['wallet', 'get']);
 
     stdout.should.startWith('Error: Missing parameter: id');
@@ -79,7 +79,7 @@ describe('Wallets:', function() {
     stdout.should.equal(nockUtils.getTransferListOutput);
   }));
 
-  it('should print out the wallet transfer information', co(function *() {
+  it('should print out information on the given transfer id', co(function *() {
     nock(nockUtils.baseUrl)
     .get('/api/v2/tbtc/wallet/' + nockUtils.walletId + '/transfer/' + nockUtils.transferId)
     .reply(200, nockUtils.getTransferIdResponse);

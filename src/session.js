@@ -27,7 +27,6 @@ function saveJSONFile(name, data) {
   fs.writeFileSync(jsonFilename(name), data, { encoding: 'utf8', mode: 0o600 });
 }
 
-
 const Session = function(bitgo) {
   this.bitgo = bitgo;
   this.user = undefined;

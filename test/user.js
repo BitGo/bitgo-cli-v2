@@ -55,13 +55,13 @@ describe('User:', function() {
     nock.cleanAll();
   });
 
-  it('should print out info of an address object', co(function *() {
+  it('should print out the id and username of the user', co(function *() {
     yield cl.run(['user', 'get']);
 
     stdout.should.equal(nockUtils.userGetOutput);
   }));
 
-  it('should print out the wallet address list', co(function *() {
+  it('should print out the user wallet list', co(function *() {
     nock(nockUtils.baseUrl)
     .get('/api/v2/tbtc/wallet')
     .query({ limit: 3 })

@@ -46,12 +46,12 @@ UserInput.prototype.promptPassword = function(question, allowBlank) {
 
   // Ensure password not blank
   return internalPromptPassword()
-    .then(function(password) {
-      if (password || allowBlank) {
-        return password;
-      }
-      return self.promptPassword(question);
-    });
+  .then(function(password) {
+    if (password || allowBlank) {
+      return password;
+    }
+    return self.promptPassword(question);
+  });
 };
 
 // Get input from user into variable, with question as prompt
@@ -69,12 +69,12 @@ UserInput.prototype.getVariable = function(name, question, required, defaultValu
           return self.prompt(question, required);
         }
       })
-        .then(function(value) {
-          if (!value && defaultValue) {
-            value = defaultValue;
-          }
-          self[name] = value;
-        });
+      .then(function(value) {
+        if (!value && defaultValue) {
+          value = defaultValue;
+        }
+        self[name] = value;
+      });
     });
   };
 };
@@ -89,20 +89,20 @@ UserInput.prototype.getPassword = function(name, question, confirm) {
         return;
       }
       return self.promptPassword(question)
-        .then(function(value) {
-          password = value;
-          if (confirm) {
-            return self.promptPassword('Confirm ' + question, true);
-          }
-        })
-        .then(function(confirmation) {
-          if (confirm && confirmation !== password) {
-            console.log("passwords don't match -- try again");
-            return self.getPassword(name, question, confirm)();
-          } else {
-            self[name] = password;
-          }
-        });
+      .then(function(value) {
+        password = value;
+        if (confirm) {
+          return self.promptPassword('Confirm ' + question, true);
+        }
+      })
+      .then(function(confirmation) {
+        if (confirm && confirmation !== password) {
+          console.log("passwords don't match -- try again");
+          return self.getPassword(name, question, confirm)();
+        } else {
+          self[name] = password;
+        }
+      });
     });
   };
 };
@@ -112,27 +112,27 @@ UserInput.prototype.getIntVariable = function(name, question, required, min, max
   const self = this;
   return function() {
     return self.getVariable(name, question, required)()
-      .then(function() {
-        const value = parseInt(self[name], 10);
-        // eslint-disable-next-line
-        if (value != self[name]) {
-          throw new Error('integer value required');
-        }
-        if (value < min) {
-          throw new Error('value must be at least ' + min);
-        }
-        if (value > max) {
-          throw new Error('value must be at most ' + max);
-        }
-        self[name] = value;
-      })
-      .catch(function(err) {
-        console.log(err.message);
-        delete self[name];
-        if (required) {
-          return self.getIntVariable(name, question, required, min, max)();
-        }
-      });
+    .then(function() {
+      const value = parseInt(self[name], 10);
+      // eslint-disable-next-line
+      if (value != self[name]) {
+        throw new Error('integer value required');
+      }
+      if (value < min) {
+        throw new Error('value must be at least ' + min);
+      }
+      if (value > max) {
+        throw new Error('value must be at most ' + max);
+      }
+      self[name] = value;
+    })
+    .catch(function(err) {
+      console.log(err.message);
+      delete self[name];
+      if (required) {
+        return self.getIntVariable(name, question, required, min, max)();
+      }
+    });
   };
 };
 

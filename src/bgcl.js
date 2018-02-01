@@ -44,12 +44,9 @@ const printJSON = function printJSON(obj) {
 
 const getSessionWallet = co(function *getSessionWallet(opts) {
   const coin = opts.session.coin;
-
   const basecoin = opts.bitgo.coin(coin);
   const wallets = basecoin.wallets();
-
   const wallet = yield wallets.get({ id: opts.session.wallet.id });
-
   return wallet;
 });
 
@@ -61,14 +58,14 @@ const ensureWallet = function ensureWallet(opts) {
 
 const ensureAuthenticated = co(function *ensureAuthenticated(opts) {
   return opts.bitgo.me()
-    .catch(function(err) {
-      throw new Error('Not logged in');
-    });
+  .catch(function(err) {
+    throw new Error('Not logged in');
+  });
 });
 
 const correctParams = function correctParams(args) {
   const params = _.omit(args, ['env', 'json', 'cmd', 'cmd2', 'batchGet']);
-  /* eslint-disable eqeqeq */
+  // eslint-disable-next-line eqeqeq
   Object.keys(params).forEach((key) => (params[key] == null) && delete params[key]);
   return params;
 };
@@ -82,7 +79,6 @@ function applyHelperFunctions(opts) {
   opts.ensureAuthenticated = ensureAuthenticated;
   opts.correctParams = correctParams;
 }
-
 
 const BGCL = function() {
 };
@@ -129,6 +125,7 @@ BGCL.prototype.createArgumentParser = function() {
   // coin type
   const coin = subparsers.addParser('coin', { help: 'Set a coin type for v2 admin routes (e.g. tbtc, btc, trmg, rmg, teth, eth, txrp, xrp, tltc, ltc)' });
   coin.addArgument(['coinType'], { nargs: '?', help: 'name of the coin to use, select from (e.g. tbtc, btc, trmg, rmg, teth, eth, txrp, xrp, tltc, ltc)' });
+
 
   /**
    * User Commands
@@ -218,7 +215,6 @@ BGCL.prototype.createArgumentParser = function() {
   fanoutUnspents.addArgument(['-c', '--minConfirms'], { type: 'int', help: 'only select unspents with at least this many confirmations' });
   fanoutUnspents.addArgument(['-e', '--enforceMinConfirmsForChange'], { action: 'storeTrue', nargs: 0, help: 'Should change outputs should respect the minConfirms parameter' });
   fanoutUnspents.addArgument(['-r', '--maxFeePercentage'], { type: 'int', help: 'Maximum percentage of an unspent’s value to be used for fees. Cannot be combined with minValue' });
-
 
   // unlock
   const unlock = walletCommands.addParser('unlock', { help: 'Unlock the session to allow transacting' });
@@ -398,7 +394,6 @@ BGCL.prototype.run = co(function *(args) {
       process.exit();
     }
   });
-
 
   const opts = {
     args: self.args,
