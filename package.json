@@ -22,8 +22,8 @@
   },
   "dependencies": {
     "argparse": "^1.0.9",
-    "bignumber.js": "^5.0.0",
-    "bitgo": "4.19.0",
+    "bignumber.js": "^6.0.0",
+    "bitgo": "^4.19.1",
     "bluebird": "^3.5.1",
     "colors": "^1.1.2",
     "columnify": "^1.5.4",

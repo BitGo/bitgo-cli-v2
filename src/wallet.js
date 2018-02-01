@@ -297,7 +297,7 @@ WalletCommands.prototype.handleWalletSendToAddress = co(function *(opts) {
   yield input.getVariable('message', 'Optional message: ')();
 
   const prefix = input.confirm ? 'Sending' : 'Please confirm sending';
-  console.log(prefix + ' ' + input.amount.toString().bold + ' to ' + input.dest.bold + '\n');
+  console.log(prefix + ' ' + input.amount.toString().bold + ' to ' + input.address.bold + '\n');
   yield input.getVariable('confirm', 'Type \'go\' to confirm: ')();
   if (input.confirm !== 'go') {
     console.log('Transaction canceled'.bold.red);

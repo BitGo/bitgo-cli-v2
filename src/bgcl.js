@@ -173,7 +173,7 @@ BGCL.prototype.createArgumentParser = function() {
   walletUnspents.addArgument(['-b', '--batchGet'], { action: 'storeTrue', nargs: 0, help: 'enable unspent batch get' });
 
   const walletSendToAddress = walletCommands.addParser('sendtoaddress', { help: 'Create and send a transaction' });
-  walletSendToAddress.addArgument(['-d', '--dest'], { help: 'the destination address' });
+  walletSendToAddress.addArgument(['-d', '--address'], { help: 'the destination address' });
   walletSendToAddress.addArgument(['-a', '--amount'], { help: 'the amount in BTC' });
   walletSendToAddress.addArgument(['-p', '--walletPassphrase'], { help: 'the wallet password' });
   walletSendToAddress.addArgument(['-o', '--otp'], { help: 'the 2-step verification code' });
