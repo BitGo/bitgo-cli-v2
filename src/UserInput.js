@@ -3,12 +3,21 @@ const read = require('read');
 const readline = require('readline');
 const _ = require('lodash');
 
-const UserInput = function(args) {
+/**
+ * Instantiate a UserInput object
+ * @param {Object} args The arguments being passed to the class
+ */
+const UserInput = function UserInput(args) {
   _.assign(this, args);
 };
 
-// Prompt the user for input
-UserInput.prototype.prompt = function(question, required) {
+/**
+ * Prompt the user for data
+ * @param {string} question The question to prompt the user
+ * @param {boolean} [required] Weather the data is required or not
+ * @returns {Promise} returns a promise after entering the data into an object
+ */
+UserInput.prototype.prompt = function prompt(question, required) {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
@@ -17,7 +26,7 @@ UserInput.prototype.prompt = function(question, required) {
   const deferred = Q.defer();
   rl.setPrompt(question);
   rl.prompt();
-  rl.on('line', function(line) {
+  rl.on('line', function line(line) {
     line = line.trim();
     if (line || !required) {
       deferred.resolve(line);
@@ -29,12 +38,21 @@ UserInput.prototype.prompt = function(question, required) {
   return deferred.promise;
 };
 
-// Prompt the user for password input
-UserInput.prototype.promptPassword = function(question, allowBlank) {
+/**
+ * Prompt the user for a password
+ * @param {string} question The question to prompt the user
+ * @param {boolean} [allowBlank] Weather or not the user can leave the field blank
+ * @returns {function} returns a function asking for the password
+ */
+UserInput.prototype.promptPassword = function promptPassword(question, allowBlank) {
   const self = this;
-  const internalPromptPassword = function() {
+  /**
+   * Replace the chars the user types with *'s
+   * @returns {string} returns the password
+   */
+  const internalPromptPassword = function internalPromptPassword() {
     const deferred = Q.defer();
-    read({ prompt: question, silent: true, replace: '*' }, function(err, result) {
+    read({ prompt: question, silent: true, replace: '*' }, function handleRead(err, result) {
       if (err) {
         deferred.reject(err);
       } else {
@@ -46,7 +64,7 @@ UserInput.prototype.promptPassword = function(question, allowBlank) {
 
   // Ensure password not blank
   return internalPromptPassword()
-  .then(function(password) {
+  .then(function handlePassword(password) {
     if (password || allowBlank) {
       return password;
     }
@@ -54,22 +72,29 @@ UserInput.prototype.promptPassword = function(question, allowBlank) {
   });
 };
 
-// Get input from user into variable, with question as prompt
-UserInput.prototype.getVariable = function(name, question, required, defaultValue) {
+/**
+ * Get input from user into variable, with question as prompt
+ * @param {string} name The name of the variable to asign the data
+ * @param {string} question The question to prompt the user
+ * @param {boolean} [required] Weather the data is required or not
+ * @param {boolean} [defaultValue] The default value of the variable if the user does not enter anything
+ * @returns {function} returns a function asking for the password
+ */
+UserInput.prototype.getVariable = function getVariable(name, question, required, defaultValue) {
   const self = this;
-  return function() {
-    return Q().then(function() {
+  return function internalGetVariable() {
+    return Q().then(function checkVariable() {
       if (self[name]) {
         return;
       }
-      return Q().then(function() {
+      return Q().then(function choosePrompt() {
         if (name === 'password' || name === 'passcode') {
           return self.promptPassword(question);
         } else {
           return self.prompt(question, required);
         }
       })
-      .then(function(value) {
+      .then(function assignVariable(value) {
         if (!value && defaultValue) {
           value = defaultValue;
         }
@@ -79,23 +104,30 @@ UserInput.prototype.getVariable = function(name, question, required, defaultValu
   };
 };
 
-UserInput.prototype.getPassword = function(name, question, confirm) {
+/**
+ * Get input from user into variable, with question as prompt
+ * @param {string} name The name of the variable to asign the data
+ * @param {string} question The question to prompt the user
+ * @param {boolean} [confirm] Weather or not to ask the user to confirm their password
+ * @returns {function} returns a function asking for the password
+ */
+UserInput.prototype.getPassword = function getPassword(name, question, confirm) {
   const self = this;
   let password;
 
-  return function() {
-    return Q().then(function() {
+  return function internalGetPassword() {
+    return Q().then(function checkVariable() {
       if (self[name]) {
         return;
       }
       return self.promptPassword(question)
-      .then(function(value) {
+      .then(function assignPassowrd(value) {
         password = value;
         if (confirm) {
           return self.promptPassword('Confirm ' + question, true);
         }
       })
-      .then(function(confirmation) {
+      .then(function checkConformation(confirmation) {
         if (confirm && confirmation !== password) {
           console.log("passwords don't match -- try again");
           return self.getPassword(name, question, confirm)();
@@ -107,12 +139,20 @@ UserInput.prototype.getPassword = function(name, question, confirm) {
   };
 };
 
-
-UserInput.prototype.getIntVariable = function(name, question, required, min, max) {
+/**
+ * Get input from user into variable, with question as prompt
+ * @param {string} name The name of the variable to asign the data
+ * @param {string} question The question to prompt the user
+ * @param {boolean} [required] Weather the data is required or not
+ * @param {number} [min] The minimum value the data entered can be
+ * @param {number} [max] The maximum value the data entered can be
+ * @returns {function} returns a function asking for the password
+ */
+UserInput.prototype.getIntVariable = function getIntVariable(name, question, required, min, max) {
   const self = this;
-  return function() {
+  return function internalGetIntVariable() {
     return self.getVariable(name, question, required)()
-    .then(function() {
+    .then(function checkInt() {
       const value = parseInt(self[name], 10);
       // eslint-disable-next-line
       if (value != self[name]) {
@@ -126,7 +166,7 @@ UserInput.prototype.getIntVariable = function(name, question, required, min, max
       }
       self[name] = value;
     })
-    .catch(function(err) {
+    .catch(function catchIntError(err) {
       console.log(err.message);
       delete self[name];
       if (required) {

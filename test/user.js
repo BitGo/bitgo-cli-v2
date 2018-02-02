@@ -9,15 +9,15 @@ const cl = new bg();
 const Session = require('../src/session');
 
 
-describe('User:', function() {
+describe('User:', function user() {
   let stdout = '';
 
   // capture standard output
-  intercept(function (txt) {
+  intercept(function interceptStandardOut(txt) {
     stdout += txt;
   });
 
-  before(co(function *() {
+  before(co(function *setUp() {
     process.env.BITGO_ENV = 'mock';
 
     const session = new Session(null);
@@ -47,21 +47,21 @@ describe('User:', function() {
 
   }));
 
-  beforeEach(function () {
+  beforeEach(function resetState() {
     stdout = '';
   });
 
-  after(function () {
+  after(function cleanUp() {
     nock.cleanAll();
   });
 
-  it('should print out the id and username of the user', co(function *() {
+  it('should print out the id and username of the user', co(function *userInfo() {
     yield cl.run(['user', 'get']);
 
     stdout.should.equal(nockUtils.userGetOutput);
   }));
 
-  it('should print out the user wallet list', co(function *() {
+  it('should print out the user wallet list', co(function *walletsList() {
     nock(nockUtils.baseUrl)
     .get('/api/v2/tbtc/wallet')
     .query({ limit: 3 })

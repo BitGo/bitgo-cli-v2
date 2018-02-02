@@ -9,15 +9,15 @@ const cl = new bg();
 const Session = require('../src/session');
 
 
-describe('Address:', function() {
+describe('Address:', function address() {
   let stdout = '';
 
   // capture standard output
-  intercept(function (txt) {
+  intercept(function interceptStandardOut(txt) {
     stdout += txt;
   });
 
-  before(co(function *() {
+  before(co(function *setUp() {
     process.env.BITGO_ENV = 'mock';
 
     const session = new Session(null);
@@ -48,15 +48,15 @@ describe('Address:', function() {
 
   }));
 
-  beforeEach(function () {
+  beforeEach(function resetState() {
     stdout = '';
   });
 
-  after(function () {
+  after(function cleanUp() {
     nock.cleanAll();
   });
 
-  it('should print out info of an address object', co(function *() {
+  it('should print out info of an address object', co(function *addressInfo() {
     nock(nockUtils.baseUrl)
     .get('/api/v2/tbtc/wallet/' + nockUtils.walletId + '/address/' + nockUtils.address)
     .reply(200, nockUtils.addressGetResponse);
@@ -66,7 +66,7 @@ describe('Address:', function() {
     stdout.should.equal(JSON.stringify(nockUtils.addressGetResponse, null, 2) + '\n');
   }));
 
-  it('should print out the wallet address list', co(function *() {
+  it('should print out the wallet address list', co(function *addressList() {
     nock(nockUtils.baseUrl)
     .get('/api/v2/tbtc/wallet/' + nockUtils.walletId + '/addresses')
     .query({ limit: 3 })

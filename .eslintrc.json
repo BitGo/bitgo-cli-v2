@@ -9,14 +9,14 @@
     "ecmaVersion": 6
   },
   "rules": {
-    "indent": ["error", 2, {"SwitchCase": 1, "MemberExpression": "off"}],
+    "indent": ["error", 2, {"SwitchCase": 1, "MemberExpression": "off" }],
     "linebreak-style": ["error", "unix"],
     "semi": ["error", "always"],
     "eqeqeq": ["warn", "always"],
     "curly": "error",
     "no-extra-boolean-cast": "off",
-    "no-unused-vars": ["error", {"vars": "all", "args": "none"}],
-    "object-curly-spacing": ["error", "always", {"objectsInObjects": true, "arraysInObjects": true}],
+    "no-unused-vars": ["error", {"vars": "all", "args": "none" }],
+    "object-curly-spacing": ["error", "always", {"objectsInObjects": true, "arraysInObjects": true }],
     "array-bracket-spacing": ["error", "never"],
     "require-yield": "off",
     "func-call-spacing": ["error", "never"],
@@ -27,9 +27,9 @@
     "no-empty": ["warn", { "allowEmptyCatch": false }],
     "no-inner-declarations": "off",
     "no-useless-escape": "off",
-    "func-names": "off",
-    "generator-star-spacing": ["error", {"before": true, "after": false}],
-    "yield-star-spacing": ["error", {"before": false, "after": true}],
+    "func-names": ["error", "always"],
+    "generator-star-spacing": ["error", {"before": true, "after": false }],
+    "yield-star-spacing": ["error", {"before": false, "after": true }],
     "no-duplicate-imports": "error",  // whilst imports are not being used, if we start to use them, we do not want duplicates
     "no-unreachable": "error",
     "no-path-concat": "off",
@@ -39,7 +39,7 @@
     "eol-last": "error",
     "no-trailing-spaces": ["warn", { "skipBlankLines": true, "ignoreComments": true }],
     "no-unneeded-ternary": "error",
-    "switch-colon-spacing": ["error", {"before": false, "after": true}],
+    "switch-colon-spacing": ["error", {"before": false, "after": true }],
     "arrow-spacing": ["error", { "before": true, "after": true }],
     "no-dupe-args": "error",
     "no-undef": "error",
@@ -50,7 +50,7 @@
     "radix": "error",
     "comma-spacing": ["error", { "before": false, "after": true }],
     "comma-dangle": ["error", "never"],
-    "no-multi-spaces": ["error", {"ignoreEOLComments": true}],
+    "no-multi-spaces": ["error", {"ignoreEOLComments": true }],
     "keyword-spacing": ["error"],
     "space-before-blocks": ["error"],
     "space-infix-ops": ["error"],
@@ -60,6 +60,8 @@
     "no-mixed-spaces-and-tabs": "error",
     "no-dupe-keys": "error",
     "no-redeclare": ["error", { "builtinGlobals": true }],
-    "no-octal": "error"
+    "no-octal": "error",
+    "require-jsdoc": ["error", { "require": { "FunctionDeclaration": true, "MethodDefinition": true, "FunctionExpression": true } }],
+    "valid-jsdoc": ["error", { "requireReturn": false }]
   }
 }

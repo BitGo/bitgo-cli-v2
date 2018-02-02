@@ -260,8 +260,8 @@ short | long | description
 --- | --- | ---
 -l | --limit        | The number of wallets to fetch (defaults to 25)
 -b | --batchGet     | Enable batch fetching, will get limit transfers per page
--s | --minSize      | Ignore unspents smaller than this amount of satoshis
--m | --maxSize      | Ignore unspents larger than this amount of satoshis
+-s | --minValue      | Ignore unspents smaller than this amount of satoshis
+-m | --maxValue      | Ignore unspents larger than this amount of satoshis
 -g | --minHeight    | Ignore unspents confirmed at a lower block height than the given minHeight
 -c | --minConfirms  | Ignores unspents that have fewer than the given confirmations
 
@@ -331,8 +331,8 @@ short | long | description
 -b | --message | Optional message
  | --confirm | Use this flag to skip the confirmation step
 -f | --feeRate | The feeRate to use for the transaction
--m | --maxSize | Ignore unspents larger than this amount of satoshis
--s | --minSize | Ignore unspents smaller than this amount of satoshis
+-m | --maxValue | Ignore unspents larger than this amount of satoshis
+-s | --minValue | Ignore unspents smaller than this amount of satoshis
 -g | --minHeight | Ignore unspents confirmed at a lower block height than the given minHeight
 -c | --minConfirms | Ignores unspents that have fewer than the given confirmations
 -e | --enforceMinConfirmsForChange | Only use change outputs that have at least minConfirms 
@@ -363,8 +363,8 @@ short | long | description
 -l | --limit | 	Number of unspents to select (Defaults to 25, Max is 200)
 -p | --walletPassphrase | The passphrase to be used to decrypt the user key on this wallet
 -f | --feeRate | The feeRate to use for the transaction
--m | --maxSize | Ignore unspents larger than this amount of satoshis
--s | --minSize | Ignore unspents smaller than this amount of satoshis
+-m | --maxValue | Ignore unspents larger than this amount of satoshis
+-s | --minValue | Ignore unspents smaller than this amount of satoshis
 -g | --minHeight | Ignore unspents confirmed at a lower block height than the given minHeight
 -c | --minConfirms | Ignores unspents that have fewer than the given confirmations
 -e | --enforceMinConfirmsForChange | Only use change outputs that have at least minConfirms 
@@ -395,8 +395,8 @@ short | long | description
 -l | --maxNumInputsToUse | 	Number of unspents you want to use in the fanout transaction (Default 20, Max 80)
 -p | --walletPassphrase | The passphrase to be used to decrypt the user key on this wallet
 -f | --feeRate | The feeRate to use for the transaction
--m | --maxSize | Ignore unspents larger than this amount of satoshis
--s | --minSize | Ignore unspents smaller than this amount of satoshis
+-m | --maxValue | Ignore unspents larger than this amount of satoshis
+-s | --minValue | Ignore unspents smaller than this amount of satoshis
 -g | --minHeight | Ignore unspents confirmed at a lower block height than the given minHeight
 -c | --minConfirms | Ignores unspents that have fewer than the given confirmations
 -e | --enforceMinConfirmsForChange | Only use change outputs that have at least minConfirms 
@@ -420,7 +420,7 @@ address commands:
 
 #### get
 ```bash
-$ bg wallet address 2MuUXDK2sRKdBTrruXi9kZNBymrAmBsqhez
+$ bg address get 2MuUXDK2sRKdBTrruXi9kZNBymrAmBsqhez
 ```
 
 Use this command to view information on an address on the current session wallet.

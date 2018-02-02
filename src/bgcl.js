@@ -29,19 +29,41 @@ const validCoins = {
   testnet: new Set(['tbtc', 'tbch', 'teth', 'tltc', 'tbtg', 'trmg', 'txrp'])
 };
 
+/**
+ * Check if the coin is valid for the current environment
+ * @param {string} coin The coin to test
+ * @returns {boolean} If the coin belongs to the current environments network
+ */
 const isValidCoin = function isValidCoin(coin) {
   return (validCoins[bitgo.getNetwork()].has(coin));
 };
 
+/**
+ * Print out data with padding
+ * @param {string} name The name of the data field
+ * @param {string} value The data to show
+ * @param {Integer} [width] The number of spaces to add
+ */
 const field = function field(name, value, width) {
   width = width || 20;
   console.log(_.string.rpad(name + ': ', width) + value);
 };
 
+/**
+ * Print out data as a spaced JSON object
+ * @param {Object} obj The data to print
+ */
 const printJSON = function printJSON(obj) {
   console.log(JSON.stringify(obj, null, 2));
 };
 
+/**
+ * Get and return the session wallet
+ * @param {Object} opts The arguments being passed to the function
+ * @param {string} opts.session.coin The current session coin
+ * @param {string} opts.session.wallet.id The current session wallet id
+ * @returns {Wallet} A wallet object for the current session
+ */
 const getSessionWallet = co(function *getSessionWallet(opts) {
   const coin = opts.session.coin;
   const basecoin = opts.bitgo.coin(coin);
@@ -50,19 +72,34 @@ const getSessionWallet = co(function *getSessionWallet(opts) {
   return wallet;
 });
 
+/**
+ * Check if a wallet has been set in the current session
+ * @param {Object} opts The arguments being passed to the function
+ * @param {string} opts.session.wallet The current session wallet info
+ */
 const ensureWallet = function ensureWallet(opts) {
   if (!opts.session.wallet || !opts.session.wallet.id) {
     throw new Error('No wallet set');
   }
 };
 
+/**
+ * Check if the current user is logged in
+ * @param {Object} opts The arguments being passed to the function
+ */
 const ensureAuthenticated = co(function *ensureAuthenticated(opts) {
-  return opts.bitgo.me()
-  .catch(function(err) {
+  try {
+    yield opts.bitgo.me();
+  } catch (err) {
     throw new Error('Not logged in');
-  });
+  }
 });
 
+/**
+ * Return a cleaned up object with out parser added keys and null data fields
+ * @param {Object} args The arguments to be cleaned
+ * @returns {Object} An object that no longer has fields added by the parser, and no longer has null or undefined data
+ */
 const correctParams = function correctParams(args) {
   const params = _.omit(args, ['env', 'json', 'cmd', 'cmd2', 'batchGet']);
   // eslint-disable-next-line eqeqeq
@@ -70,6 +107,10 @@ const correctParams = function correctParams(args) {
   return params;
 };
 
+/**
+ * Assign the helper function to the opts variable so other files can use them
+ * @param {Object} opts The object to assign the helper functions to
+ */
 function applyHelperFunctions(opts) {
   opts.isValidCoin = isValidCoin;
   opts.field = field;
@@ -80,10 +121,17 @@ function applyHelperFunctions(opts) {
   opts.correctParams = correctParams;
 }
 
-const BGCL = function() {
+/**
+ * Instantiate an BGCL (bitgo command line) object
+ */
+const BGCL = function BGCL() {
 };
 
-BGCL.prototype.createArgumentParser = function() {
+/**
+ * Instantiate an BGCL (bitgo command line) object
+ * @returns {Object} The parser object containing all commands and subcommands
+ */
+BGCL.prototype.createArgumentParser = function createArgumentParser() {
   /* eslint-disable no-unused-vars */
   const parser = new ArgumentParser({
     version: BGCLI_VERSION,
@@ -101,7 +149,6 @@ BGCL.prototype.createArgumentParser = function() {
     title: 'subcommands',
     dest: 'cmd'
   });
-  this.subparsers = subparsers;
 
   // login
   const login = subparsers.addParser('login', {
@@ -255,11 +302,17 @@ BGCL.prototype.createArgumentParser = function() {
   return parser;
 };
 
-BGCL.prototype.handleCoin = function(opts) {
+/**
+ * Handle the coin command, to see or set the session coin
+ * @param {object} opts The arguments being passed to the function
+ * @param {string} opts.args.coinType The coin type to set the current session to
+ */
+BGCL.prototype.handleCoin = function handleCoin(opts) {
   const coinType = opts.args.coinType;
 
   if (!coinType) {
-    return opts.field('Session coin is currently set to', opts.session.coin.bold.green);
+    opts.field('Session coin is currently set to', opts.session.coin.bold.green);
+    return;
   }
 
   if (!isValidCoin(coinType)) {
@@ -274,6 +327,13 @@ BGCL.prototype.handleCoin = function(opts) {
   opts.field('Session coin set to', opts.session.coin.bold.green);
 };
 
+/**
+ * Handle the login command
+ * @param {object} opts The arguments being passed to the function
+ * @param {string} [opts.args.username] The email / username of the user
+ * @param {string} [opts.args.password] The password of the user
+ * @param {string} [opts.args.otp] The two factor auth code of the user
+ */
 BGCL.prototype.handleLogin = co(function *handleLogin(opts) {
   opts.bitgo.clear();
   const input = new UserInput(this.args);
@@ -305,10 +365,15 @@ BGCL.prototype.handleLogin = co(function *handleLogin(opts) {
   console.log('Logged in as ' + input.username + ' from ' + ip);
 });
 
-// Check if current session is using a long lived token and warn user if true
-// Used to prevent a user from changing or possibly invalidating (in the case
-// of a call to logout) the long-lived token.
-BGCL.prototype.checkAndWarnOfLongLivedTokenChange = co(function *(opts, warning) {
+/**
+ * Check if current session is using a long lived token and warn user if true
+ * Used to prevent a user from changing or possibly invalidating (in the case
+ * of a call to logout) the long-lived token.
+ *
+ * @param {object} opts The arguments being passed to the function
+ * @param {string} warning The warning message to show to the user
+ */
+BGCL.prototype.checkAndWarnOfLongLivedTokenChange = co(function *checkAndWarnOfLongLivedTokenChange(opts, warning) {
   const res = yield opts.bitgo.session();
   if (_.includes(_.keys(res), 'label')) {
     console.log(warning);
@@ -320,7 +385,11 @@ BGCL.prototype.checkAndWarnOfLongLivedTokenChange = co(function *(opts, warning)
   }
 });
 
-BGCL.prototype.handleLogout = co(function *(opts) {
+/**
+ * Handle the logout command
+ * @param {object} opts The arguments being passed to the function
+ */
+BGCL.prototype.handleLogout = co(function *handleLogout(opts) {
   const env = opts.bitgo.getEnv();
   yield this.checkAndWarnOfLongLivedTokenChange(opts, 'About to logout of a session with a longed-lived access token!\n' +
     'This will invalidate the long-lived access token, making it unusable in the future\n');
@@ -329,7 +398,12 @@ BGCL.prototype.handleLogout = co(function *(opts) {
   console.log('Logged out'.bold);
 });
 
-BGCL.prototype.handleToken = co(function *(opts) {
+/**
+ * Handle the token command, to see the current token or login using a token
+ * @param {object} opts The arguments being passed to the function
+ * @param {object} [opts.args.token] The token to login with
+ */
+BGCL.prototype.handleToken = co(function *handleToken(opts) {
   // If no token set, display current one
   if (!opts.args.token) {
     yield opts.ensureAuthenticated(opts);
@@ -353,7 +427,12 @@ BGCL.prototype.handleToken = co(function *(opts) {
   }
 });
 
-BGCL.prototype.runCommandHandler = co(function *(opts) {
+/**
+ * Handle the command to run
+ * @param {Object} opts The arguments being passed to the function
+ * @param {string} opts.args.cmd The command to run
+ */
+BGCL.prototype.runCommandHandler = co(function *runCommandHandler(opts) {
   switch (opts.args.cmd) {
     case 'login':
       return this.handleLogin(opts);
@@ -374,7 +453,11 @@ BGCL.prototype.runCommandHandler = co(function *(opts) {
   }
 });
 
-BGCL.prototype.run = co(function *(args) {
+/**
+ * Run the command line tool, setup the bitgo and session objects for the commands to use
+ * @param {Object} [args] The arguments being passed from the command line if simulated
+ */
+BGCL.prototype.run = co(function *run(args) {
   const self = this;
   this.parser = this.createArgumentParser();
   this.args = this.parser.parseArgs(args);
@@ -389,7 +472,7 @@ BGCL.prototype.run = co(function *(args) {
 
   // we dont want process.exit() to run during mocha unit tests, so if the env is mock, end silently, other wise call process.exit()
   const eventEmitter = new EventEmitter();
-  eventEmitter.on('myExit', function () {
+  eventEmitter.on('myExit', function myExit() {
     if (env !== 'mock') {
       process.exit();
     }
@@ -404,10 +487,10 @@ BGCL.prototype.run = co(function *(args) {
 
   applyHelperFunctions(opts);
 
-  return Promise.try(function() {
+  return Promise.try(function runCommand() {
     return self.runCommandHandler(opts);
   })
-  .catch(function(err) {
+  .catch(function handleError(err) {
     console.error(err);
   });
 });

@@ -9,15 +9,15 @@ const cl = new bg();
 const Session = require('../src/session');
 
 
-describe('Wallets:', function() {
+describe('Wallets:', function walletsTest() {
   let stdout = '';
 
   // capture standard output
-  intercept(function(txt) {
+  intercept(function interceptStandardOut(txt) {
     stdout += txt;
   });
 
-  before(co(function *() {
+  before(co(function *setUp() {
     process.env.BITGO_ENV = 'mock';
 
     const session = new Session(null);
@@ -48,27 +48,27 @@ describe('Wallets:', function() {
 
   }));
 
-  beforeEach(function () {
+  beforeEach(function resetState() {
     stdout = '';
   });
 
-  after(function () {
+  after(function cleanUp() {
     nock.cleanAll();
   });
 
-  it('should fail if you do not pass in the wallet id', co(function *() {
+  it('should fail if you do not pass in the wallet id', co(function *walletGetFail() {
     yield cl.run(['wallet', 'get']);
 
     stdout.should.startWith('Error: Missing parameter: id');
   }));
 
-  it('should print out the wallet info', co(function *() {
+  it('should print out the wallet info', co(function *walletGet() {
     yield cl.run(['wallet', 'get', nockUtils.walletId]);
 
     stdout.should.equal(nockUtils.getWalletOutput);
   }));
 
-  it('should print out the wallet transfer list', co(function *() {
+  it('should print out the wallet transfer list', co(function *transferList() {
     nock(nockUtils.baseUrl)
     .get('/api/v2/tbtc/wallet/' + nockUtils.walletId + '/transfer')
     .query({ limit: 5 })
@@ -79,7 +79,7 @@ describe('Wallets:', function() {
     stdout.should.equal(nockUtils.getTransferListOutput);
   }));
 
-  it('should print out information on the given transfer id', co(function *() {
+  it('should print out information on the given transfer id', co(function *transferInfo() {
     nock(nockUtils.baseUrl)
     .get('/api/v2/tbtc/wallet/' + nockUtils.walletId + '/transfer/' + nockUtils.transferId)
     .reply(200, nockUtils.getTransferIdResponse);
@@ -89,7 +89,7 @@ describe('Wallets:', function() {
     stdout.should.equal(nockUtils.getTransferIdOutput);
   }));
 
-  it('should print out the wallet unspent list', co(function *() {
+  it('should print out the wallet unspent list', co(function *unspentsList() {
     nock(nockUtils.baseUrl)
     .get('/api/v2/tbtc/wallet/' + nockUtils.walletId + '/unspents')
     .query({ limit: 1 })
@@ -100,7 +100,7 @@ describe('Wallets:', function() {
     stdout.should.equal(nockUtils.getUnspentsOutput);
   }));
 
-  it('should say it unlocked the session', co(function *() {
+  it('should say it unlocked the session', co(function *unlockSession() {
     nock(nockUtils.baseUrl)
     .post('/api/v1/user/unlock', { otp: '0000000' })
     .reply(200, {});
@@ -110,7 +110,7 @@ describe('Wallets:', function() {
     stdout.should.equal('Unlocked session\n');
   }));
 
-  it('should say it locked the session', co(function *() {
+  it('should say it locked the session', co(function *lockSession() {
     nock(nockUtils.baseUrl)
     .post('/api/v1/user/lock')
     .reply(200, {});
@@ -120,7 +120,7 @@ describe('Wallets:', function() {
     stdout.should.equal('Locked session\n');
   }));
 
-  it('should freeze a wallet', co(function *() {
+  it('should freeze a wallet', co(function *freezeWallet() {
     nock(nockUtils.baseUrl)
     .post('/api/v2/tbtc/wallet/' + nockUtils.walletId + '/freeze')
     .reply(200, nockUtils.walletFreeseResponse);

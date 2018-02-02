@@ -3,11 +3,18 @@ const co = Promise.coroutine;
 const _ = require('lodash');
 const columnify = require('columnify');
 
-const userCommands = function() {
-
+/**
+ * Instantiate an AddressCommands object
+ */
+const userCommands = function userCommands() {
 };
 
-userCommands.prototype.handleUser = co(function *(opts) {
+/**
+ * Handle the user sub-commands
+ * @param {Object} opts The arguments being passed to the function
+ * @param {string} opts.args.cmd2 The command to run
+ */
+userCommands.prototype.handleUser = co(function *handleUser(opts) {
   switch (opts.args.cmd2) {
     case 'get':
       return this.handleUserGet(opts);
@@ -18,7 +25,11 @@ userCommands.prototype.handleUser = co(function *(opts) {
   }
 });
 
-userCommands.prototype.handleUserGet = co(function *(opts) {
+/**
+ * Get information on the logged inuser in the session
+ * @param {Object} opts The arguments being passed to the function
+ */
+userCommands.prototype.handleUserGet = co(function *handleUserGet(opts) {
   let user = opts.session.user;
   if (!user) {
     user = yield opts.bitgo.me();
@@ -39,7 +50,13 @@ userCommands.prototype.handleUserGet = co(function *(opts) {
 
 });
 
-userCommands.prototype.handleUserWallets = co(function *(opts) {
+/**
+ * List wallets of type session coin for the current user
+ * @param {Object} opts The arguments being passed to the function
+ * @param {Integer} [opts.args.limit] The number of wallets to fetch
+ * @param {boolean} [opts.args.batchGet] A boolean to decide to fetch batches of wallets
+ */
+userCommands.prototype.handleUserWallets = co(function *handleUserWallets(opts) {
   opts.ensureAuthenticated(opts);
 
   const coin = opts.session.coin;
@@ -51,7 +68,7 @@ userCommands.prototype.handleUserWallets = co(function *(opts) {
   let offset = 0; // used to update index when printing wallets
   let prevId; // used to query for next batch of wallets
   const self = this;
-  const internalFetchWallets = co(function *(str, key) {
+  const internalFetchWallets = co(function *internalFetchWallets(str, key) {
     if (key.name !== 'space') {
       opts.eventEmitter.emit('myExit');
     } else {
@@ -75,7 +92,15 @@ userCommands.prototype.handleUserWallets = co(function *(opts) {
   }
 });
 
-userCommands.prototype.fetchUserWalletBatch = co(function *(opts, coin, limit, prevId, offset = 0) {
+/**
+ * Fetch a batch of wallets
+ * @param {Object} opts The arguments being passed to the function
+ * @param {string} coin The coin type of the wallets to fetch
+ * @param {Integer} limit The number of wallets to fetch
+ * @param {string} prevId The previous batch id, used to get the next batch
+ * @param {Integer} offset The number of wallets fetched, used to keep track of the index to print
+ */
+userCommands.prototype.fetchUserWalletBatch = co(function *fetchUserWalletBatch(opts, coin, limit, prevId, offset = 0) {
   const query = { prevId: prevId, limit: limit };
 
   const res = yield opts.bitgo.coin(opts.session.coin).wallets().list(query);
@@ -92,8 +117,13 @@ userCommands.prototype.fetchUserWalletBatch = co(function *(opts, coin, limit, p
   return prevId;
 });
 
-
-userCommands.prototype.printWalletList = co(function *(opts, wallets, offset = 0) {
+/**
+ * Print a list of wallets
+ * @param {Object} opts The arguments being passed to the function
+ * @param {array} wallets The list of wallets to print
+ * @param {Integer} offset The number of wallets fetched, used to keep track of the index to print
+ */
+userCommands.prototype.printWalletList = co(function *printWalletList(opts, wallets, offset = 0) {
   const columns = ['Index', 'ID', 'Label', 'Balance'];
   const config = {
     Index: { minWidth: 6 },
@@ -102,7 +132,7 @@ userCommands.prototype.printWalletList = co(function *(opts, wallets, offset = 0
     Balance: { minWidth: 14 }
   };
 
-  const rows = wallets.map(function (wallet, index) {
+  const rows = wallets.map(function getWalletInfo(wallet, index) {
     let balanceStr = '';
 
     if (wallet.balanceString) {

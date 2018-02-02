@@ -8,11 +8,18 @@ require('colors');
 
 const UserInput = require('./UserInput');
 
-const WalletCommands = function() {
-
+/**
+ * Instantiate a WalletCommands object
+ */
+const WalletCommands = function WalletCommands() {
 };
 
-WalletCommands.prototype.handleWallet = co(function *(opts) {
+/**
+ * Handle the wallet sub-commands
+ * @param {Object} opts The arguments being passed to the function
+ * @param {string} opts.args.cmd2 The command to run
+ */
+WalletCommands.prototype.handleWallet = co(function *handleWallet(opts) {
   switch (opts.args.cmd2) {
     case 'get':
       return this.handleWalletGet(opts);
@@ -39,7 +46,12 @@ WalletCommands.prototype.handleWallet = co(function *(opts) {
   }
 });
 
-WalletCommands.prototype.handleWalletGet = co(function *(opts) {
+/**
+ * Get information on a wallet
+ * @param {Object} opts The arguments being passed to the function
+ * @param {string} opts.args.id The id to lookup
+ */
+WalletCommands.prototype.handleWalletGet = co(function *handleWalletGet(opts) {
   const coin = opts.session.coin;
   const id = opts.args.id;
 
@@ -65,11 +77,14 @@ WalletCommands.prototype.handleWalletGet = co(function *(opts) {
   opts.field('Balance', coinObj.baseUnitsToBigUnits(wallet.balanceString) + ' ' + _.toUpper(coin));
   opts.field('Confirmed', coinObj.baseUnitsToBigUnits(wallet.confirmedBalanceString) + ' ' + _.toUpper(coin));
   opts.field('Spendable', coinObj.baseUnitsToBigUnits(wallet.spendableBalanceString) + ' ' + _.toUpper(coin));
-  return wallet;
 });
 
-
-WalletCommands.prototype.handleWalletTransfer = co(function *(opts) {
+/**
+ * Get information on a transfer
+ * @param {Object} opts The arguments being passed to the function
+ * @param {string} opts.args.id The id to lookup
+ */
+WalletCommands.prototype.handleWalletTransfer = co(function *handleWalletTransfer(opts) {
   opts.ensureWallet(opts);
 
   const wallet = yield opts.getSessionWallet(opts);
@@ -95,7 +110,13 @@ WalletCommands.prototype.handleWalletTransfer = co(function *(opts) {
   opts.field('State', transfer.state);
 });
 
-WalletCommands.prototype.handleWalletTransfersList = co(function *(opts) {
+/**
+ * List transfers on the session wallet
+ * @param {Object} opts The arguments being passed to the function
+ * @param {Integer} [opts.args.limit] The number of address to fetch
+ * @param {boolean} [opts.args.batchGet] A boolean to decide to fetch batches of address
+ */
+WalletCommands.prototype.handleWalletTransfersList = co(function *handleWalletTransfersList(opts) {
   opts.ensureWallet(opts);
 
   yield opts.ensureAuthenticated(opts);
@@ -113,7 +134,7 @@ WalletCommands.prototype.handleWalletTransfersList = co(function *(opts) {
   let prevId; // used to query for next batch of wallets
   const self = this;
 
-  const internalFetchTransferss = co(function *(str, key) {
+  const internalFetchTransfers = co(function *internalFetchTransfers(str, key) {
     if (key.name !== 'space') {
       opts.eventEmitter.emit('myExit');
     } else {
@@ -128,17 +149,26 @@ WalletCommands.prototype.handleWalletTransfersList = co(function *(opts) {
     }
   });
 
-  yield internalFetchTransferss(' ', { name: 'space' }); // get and print first batch of wallets
+  yield internalFetchTransfers(' ', { name: 'space' }); // get and print first batch of wallets
   if (batchGet) {
     const readline = require('readline');
     readline.emitKeypressEvents(process.stdin);
     process.stdin.setRawMode(true);
-    process.stdin.on('keypress', internalFetchTransferss);
+    process.stdin.on('keypress', internalFetchTransfers);
   }
 
 });
 
-WalletCommands.prototype.fetchTransferBatch = co(function *(opts, coin, wallet, limit, prevId, offset = 0) {
+/**
+ * Fetch a batch of transfers
+ * @param {Object} opts The arguments being passed to the function
+ * @param {string} coin The coin type of the wallet
+ * @param {Wallet} wallet The wallet object to use to fetch the addresses
+ * @param {Integer} limit The number of address to fetch
+ * @param {string} prevId The previous batch id, used to get the next batch
+ * @param {Integer} offset The number of address fetched, used to keep track of the index to print
+ */
+WalletCommands.prototype.fetchTransferBatch = co(function *fetchTransferBatch(opts, coin, wallet, limit, prevId, offset = 0) {
   const query = { prevId: prevId, limit: limit };
 
   const res = yield wallet.transfers(query);
@@ -162,7 +192,7 @@ WalletCommands.prototype.fetchTransferBatch = co(function *(opts, coin, wallet, 
     Desc: { minWidth: 7 }
   };
 
-  const rows = transfers.map(function(tx, index) {
+  const rows = transfers.map(function getTransferInfo(tx, index) {
 
     const value = new BigNumber(tx.valueString);
     let desc = 'unknown';
@@ -192,7 +222,17 @@ WalletCommands.prototype.fetchTransferBatch = co(function *(opts, coin, wallet, 
   return prevId;
 });
 
-WalletCommands.prototype.handleWalletUnspentsList = co(function *(opts) {
+/**
+ * List transfers on the session wallet
+ * @param {Object} opts The arguments being passed to the function
+ * @param {Integer} [opts.args.limit] The number of address to fetch
+ * @param {boolean} [opts.args.batchGet] A boolean to decide to fetch batches of address
+ * @param {Integer} [opts.args.minValue] Ignore unspents smaller than this amount of satoshis
+ * @param {Integer} [opts.args.maxValue] Ignore unspents larger than this amount of satoshis
+ * @param {Integer} [opts.args.minHeight] Ignore unspents confirmed at a lower block height than the given minHeight
+ * @param {Integer} [opts.args.minConfirms] Ignores unspents that have fewer than the given confirmations
+ */
+WalletCommands.prototype.handleWalletUnspentsList = co(function *handleWalletUnspentsList(opts) {
   opts.ensureWallet(opts);
 
   yield opts.ensureAuthenticated(opts);
@@ -210,7 +250,7 @@ WalletCommands.prototype.handleWalletUnspentsList = co(function *(opts) {
   let prevId; // used to query for next batch of wallets
   const self = this;
 
-  const internalFetchUnspents = co(function *(str, key) {
+  const internalFetchUnspents = co(function *internalFetchUnspents(str, key) {
     if (key.name !== 'space') {
       opts.eventEmitter.emit('myExit');
     } else {
@@ -235,7 +275,16 @@ WalletCommands.prototype.handleWalletUnspentsList = co(function *(opts) {
 
 });
 
-WalletCommands.prototype.fetchUnspentsBatch = co(function *(opts, coin, wallet, limit, prevId, offset = 0) {
+/**
+ * Fetch a batch of transfers
+ * @param {Object} opts The arguments being passed to the function
+ * @param {string} coin The coin type of the wallet
+ * @param {Wallet} wallet The wallet object to use to fetch the addresses
+ * @param {Integer} limit The number of address to fetch
+ * @param {string} prevId The previous batch id, used to get the next batch
+ * @param {Integer} offset The number of address fetched, used to keep track of the index to print
+ */
+WalletCommands.prototype.fetchUnspentsBatch = co(function *fetchUnspentsBatch(opts, coin, wallet, limit, prevId, offset = 0) {
   const query = opts.correctParams(opts.args);
   query.prevId = prevId;
   query.limit = limit;
@@ -262,7 +311,7 @@ WalletCommands.prototype.fetchUnspentsBatch = co(function *(opts, coin, wallet, 
 
   const baseFactor = opts.bitgo.coin(coin).getBaseFactor();
 
-  const rows = unspents.map(function(unspent, index) {
+  const rows = unspents.map(function getUnspentInfo(unspent, index) {
 
     const result = {
       Index: index + offset,
@@ -287,7 +336,25 @@ WalletCommands.prototype.fetchUnspentsBatch = co(function *(opts, coin, wallet, 
   return prevId;
 });
 
-WalletCommands.prototype.handleWalletSendToAddress = co(function *(opts) {
+
+/**
+ * Send the given value to the given address from the session wallet
+ * @param {Object} opts The arguments being passed to the function
+ * @param {string} [opts.args.address] The address to send to
+ * @param {Integer} [opts.args.amount] The amount to send
+ * @param {string} [opts.args.walletPassphrase] The wallet passphrase
+ * @param {string} [opts.args.message] The message to add to the transaction
+ * @param {boolean} [opts.args.confirm] A boolean to skip the conformation step
+ * @param {Integer} [opts.args.feeRate] The feeRate to use for the transaction
+ * @param {Integer} [opts.args.minValue] Ignore unspents smaller than this amount of satoshis
+ * @param {Integer} [opts.args.maxValue] Ignore unspents larger than this amount of satoshis
+ * @param {Integer} [opts.args.minHeight] Ignore unspents confirmed at a lower block height than the given minHeight
+ * @param {Integer} [opts.args.minConfirms] Ignores unspents that have fewer than the given confirmations
+ * @param {boolean} [opts.args.enforceMinConfirmsForChange] Only use change outputs that have at least minConfirms
+ * @param {Integer} [opts.args.targetWalletUnspents] The desired count of unspents in the wallet
+ * @param {boolean} [opts.args.noSplitChange] Set this flag to disable automatic change splitting
+ */
+WalletCommands.prototype.handleWalletSendToAddress = co(function *handleWalletSendToAddress(opts) {
   opts.ensureWallet(opts);
   const input = new UserInput(opts.args);
 
@@ -318,7 +385,12 @@ WalletCommands.prototype.handleWalletSendToAddress = co(function *(opts) {
   opts.field('txid'.bold, tx.txid);
 });
 
-WalletCommands.prototype.handleWalletUnlock = co(function *(opts) {
+/**
+ * Unlock the current session wallet to allow sending
+ * @param {Object} opts The arguments being passed to the function
+ * @param {Integer} [opts.args.otp] The two factor auth code of the user
+ */
+WalletCommands.prototype.handleWalletUnlock = co(function *handleWalletUnlock(opts) {
   opts.ensureWallet(opts);
 
   const input = new UserInput(opts.args);
@@ -332,7 +404,11 @@ WalletCommands.prototype.handleWalletUnlock = co(function *(opts) {
 
 });
 
-WalletCommands.prototype.handleWalletLock = co(function *(opts) {
+/**
+ * Lock the current session wallet to disallow sending
+ * @param {Object} opts The arguments being passed to the function
+ */
+WalletCommands.prototype.handleWalletLock = co(function *handleWalletLock(opts) {
   opts.ensureWallet(opts);
 
   yield opts.bitgo.lock();
@@ -340,7 +416,13 @@ WalletCommands.prototype.handleWalletLock = co(function *(opts) {
   console.log('Locked session'.bold.green);
 });
 
-WalletCommands.prototype.handleWalletFreeze = co(function *(opts) {
+/**
+ * Unlock the current session wallet to allow sending
+ * @param {Object} opts The arguments being passed to the function
+ * @param {Integer} [opts.args.duration] The number of seconds to freeze the wallet
+ * @param {boolean} [opts.args.confirm] A boolean to skip the conformation step
+ */
+WalletCommands.prototype.handleWalletFreeze = co(function *handleWalletFreeze(opts) {
   opts.ensureWallet(opts);
   const wallet = yield opts.getSessionWallet(opts);
 
@@ -362,7 +444,22 @@ WalletCommands.prototype.handleWalletFreeze = co(function *(opts) {
   console.log('Wallet frozen until ' + result.expires);
 });
 
-WalletCommands.prototype.handleWalletConsolidate = co(function *(opts) {
+/**
+ * Send the given value to the given address from the session wallet
+ * @param {Object} opts The arguments being passed to the function
+ * @param {string} [opts.args.walletPassphrase] The wallet passphrase
+ * @param {Integer} [opts.args.numUnspentsToMake] Number of outputs created by the consolidation transaction
+ * @param {Integer} [opts.args.limit] Number of unspents to select
+ * @param {Integer} [opts.args.feeRate] The feeRate to use for the transaction
+ * @param {Integer} [opts.args.minValue] Ignore unspents smaller than this amount of satoshis
+ * @param {Integer} [opts.args.maxValue] Ignore unspents larger than this amount of satoshis
+ * @param {Integer} [opts.args.minHeight] Ignore unspents confirmed at a lower block height than the given minHeight
+ * @param {Integer} [opts.args.minConfirms] Ignores unspents that have fewer than the given confirmations
+ * @param {boolean} [opts.args.enforceMinConfirmsForChange] Only use change outputs that have at least minConfirms
+ * @param {Integer} [opts.args.feeTxConfirmTarget] Targeting confirmation in this number of blocks
+ * @param {Integer} [opts.args.maxFeePercentage] Maximum percentage of an unspent’s value to be used for fees
+ */
+WalletCommands.prototype.handleWalletConsolidate = co(function *handleWalletConsolidate(opts) {
   opts.ensureWallet(opts);
 
   const params = opts.correctParams(opts.args);
@@ -385,7 +482,22 @@ WalletCommands.prototype.handleWalletConsolidate = co(function *(opts) {
 
 });
 
-WalletCommands.prototype.handleWalletFanout = co(function *(opts) {
+/**
+ * Send the given value to the given address from the session wallet
+ * @param {Object} opts The arguments being passed to the function
+ * @param {string} [opts.args.walletPassphrase] The wallet passphrase
+ * @param {Integer} [opts.args.numUnspentsToMake] Number of unspents you want to create in the transaction
+ * @param {Integer} [opts.args.maxNumInputsToUse]Number of unspents you want to use in the fanout transaction
+ * @param {Integer} [opts.args.feeRate] The feeRate to use for the transaction
+ * @param {Integer} [opts.args.minValue] Ignore unspents smaller than this amount of satoshis
+ * @param {Integer} [opts.args.maxValue] Ignore unspents larger than this amount of satoshis
+ * @param {Integer} [opts.args.minHeight] Ignore unspents confirmed at a lower block height than the given minHeight
+ * @param {Integer} [opts.args.minConfirms] Ignores unspents that have fewer than the given confirmations
+ * @param {boolean} [opts.args.enforceMinConfirmsForChange] Only use change outputs that have at least minConfirms
+ * @param {Integer} [opts.args.feeTxConfirmTarget] Targeting confirmation in this number of blocks
+ * @param {Integer} [opts.args.maxFeePercentage] Maximum percentage of an unspent’s value to be used for fees
+ */
+WalletCommands.prototype.handleWalletFanout = co(function *handleWalletFanout(opts) {
   opts.ensureWallet(opts);
 
   const params = opts.correctParams(opts.args);

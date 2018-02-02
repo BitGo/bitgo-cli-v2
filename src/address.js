@@ -3,11 +3,18 @@ const co = Promise.coroutine;
 const columnify = require('columnify');
 require('colors');
 
-const AddressCommands = function() {
-
+/**
+ * Instantiate an AddressCommands object
+ */
+const AddressCommands = function AddressCommands() {
 };
 
-AddressCommands.prototype.handleAddress = co(function *(opts) {
+/**
+ * Handle the address sub-commands
+ * @param {Object} opts The arguments being passed to the function
+ * @param {string} opts.args.cmd2 The command to run
+ */
+AddressCommands.prototype.handleAddress = co(function *handleAddress(opts) {
   switch (opts.args.cmd2) {
     case 'get':
       return this.handleAddressGet(opts);
@@ -20,7 +27,12 @@ AddressCommands.prototype.handleAddress = co(function *(opts) {
   }
 });
 
-AddressCommands.prototype.handleAddressGet = co(function *(opts) {
+/**
+ * Get information on an address in the session wallet based on the address or id passed in.
+ * @param {Object} opts The arguments being passed to the function
+ * @param {string} opts.args.id The id or address to lookup
+ */
+AddressCommands.prototype.handleAddressGet = co(function *handleAddressGet(opts) {
   opts.ensureWallet(opts);
   const wallet = yield opts.getSessionWallet(opts);
 
@@ -28,7 +40,13 @@ AddressCommands.prototype.handleAddressGet = co(function *(opts) {
   opts.printJSON(address);
 });
 
-AddressCommands.prototype.handleAddressList = co(function *(opts) {
+/**
+ * List address on the session wallet
+ * @param {Object} opts The arguments being passed to the function
+ * @param {Integer} [opts.args.limit] The number of address to fetch
+ * @param {boolean} [opts.args.batchGet] A boolean to decide to fetch batches of address
+ */
+AddressCommands.prototype.handleAddressList = co(function *handleAddressList(opts) {
   opts.ensureWallet(opts);
 
   yield opts.ensureAuthenticated(opts);
@@ -46,7 +64,7 @@ AddressCommands.prototype.handleAddressList = co(function *(opts) {
   let prevId; // used to query for next batch of wallets
   const self = this;
 
-  const internalFetchAddresses = co(function *(str, key) {
+  const internalFetchAddresses = co(function *internalFetchAddresses(str, key) {
     if (key.name !== 'space') {
       opts.eventEmitter.emit('myExit');
     } else {
@@ -71,7 +89,16 @@ AddressCommands.prototype.handleAddressList = co(function *(opts) {
 
 });
 
-AddressCommands.prototype.fetchAddressBatch = co(function *(opts, coin, wallet, limit, prevId, offset = 0) {
+/**
+ * Fetch a batch of addresses
+ * @param {Object} opts The arguments being passed to the function
+ * @param {string} coin The coin type of the wallet
+ * @param {Wallet} wallet The wallet object to use to fetch the addresses
+ * @param {Integer} limit The number of address to fetch
+ * @param {string} prevId The previous batch id, used to get the next batch
+ * @param {Integer} offset The number of address fetched, used to keep track of the index to print
+ */
+AddressCommands.prototype.fetchAddressBatch = co(function *fetchAddressBatch(opts, coin, wallet, limit, prevId, offset = 0) {
   const query = { prevId: prevId, limit: limit };
 
   const res = yield wallet.addresses(query);
@@ -93,7 +120,7 @@ AddressCommands.prototype.fetchAddressBatch = co(function *(opts, coin, wallet, 
     Chain: { minWidth: 1 }
   };
 
-  const rows = addresses.map(function(address, index) {
+  const rows = addresses.map(function getAddressInfo(address, index) {
 
     const result = {
       Index: index + offset,
@@ -114,7 +141,12 @@ AddressCommands.prototype.fetchAddressBatch = co(function *(opts, coin, wallet, 
   return prevId;
 });
 
-AddressCommands.prototype.handleNewAddress = co(function *(opts) {
+/**
+ * Generate a new address on the current session wallet
+ * @param {Object} opts The arguments being passed to the function
+ * @param {boolean} [opts.args.change] A boolean to decide to create a change address
+ */
+AddressCommands.prototype.handleNewAddress = co(function *handleNewAddress(opts) {
   opts.ensureWallet(opts);
   const wallet = yield opts.getSessionWallet(opts);
 
