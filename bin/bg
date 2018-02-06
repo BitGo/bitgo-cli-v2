@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+
+const bgcl = require('../src/bgcl');
+
+const cl = new bgcl();
+try {
+  cl.run();
+} catch (err) {
+  console.log(err.message);
+}
