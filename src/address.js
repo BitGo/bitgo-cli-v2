@@ -59,9 +59,9 @@ AddressCommands.prototype.handleAddressList = co(function *handleAddressList(opt
 
 
   // Callback function for keyboard input
-  // Waits for spacebar click to get more wallets, any other key will force quit
-  let offset = 0; // used to update index when printing wallets
-  let prevId; // used to query for next batch of wallets
+  // Waits for spacebar click to get more addresses, any other key will force quit
+  let offset = 0; // used to update index when printing addresses
+  let prevId; // used to query for next batch
   const self = this;
 
   const internalFetchAddresses = co(function *internalFetchAddresses(str, key) {

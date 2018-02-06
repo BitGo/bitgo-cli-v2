@@ -4,7 +4,7 @@ const _ = require('lodash');
 const columnify = require('columnify');
 
 /**
- * Instantiate an AddressCommands object
+ * Instantiate an UserCommands object
  */
 const userCommands = function userCommands() {
 };
@@ -26,7 +26,7 @@ userCommands.prototype.handleUser = co(function *handleUser(opts) {
 });
 
 /**
- * Get information on the logged inuser in the session
+ * Get information on the logged in user in the session
  * @param {Object} opts The arguments being passed to the function
  */
 userCommands.prototype.handleUserGet = co(function *handleUserGet(opts) {
@@ -66,7 +66,7 @@ userCommands.prototype.handleUserWallets = co(function *handleUserWallets(opts) 
   // Callback function for keyboard input
   // Waits for spacebar click to get more wallets, any other key will force quit
   let offset = 0; // used to update index when printing wallets
-  let prevId; // used to query for next batch of wallets
+  let prevId; // used to query for next batch
   const self = this;
   const internalFetchWallets = co(function *internalFetchWallets(str, key) {
     if (key.name !== 'space') {

@@ -129,9 +129,9 @@ WalletCommands.prototype.handleWalletTransfersList = co(function *handleWalletTr
 
 
   // Callback function for keyboard input
-  // Waits for spacebar click to get more wallets, any other key will force quit
-  let offset = 0; // used to update index when printing wallets
-  let prevId; // used to query for next batch of wallets
+  // Waits for spacebar click to get more transfers, any other key will force quit
+  let offset = 0; // used to update index when printing transfers
+  let prevId; // used to query for next batch
   const self = this;
 
   const internalFetchTransfers = co(function *internalFetchTransfers(str, key) {
@@ -245,9 +245,9 @@ WalletCommands.prototype.handleWalletUnspentsList = co(function *handleWalletUns
 
 
   // Callback function for keyboard input
-  // Waits for spacebar click to get more wallets, any other key will force quit
-  let offset = 0; // used to update index when printing wallets
-  let prevId; // used to query for next batch of wallets
+  // Waits for spacebar click to get more unspents, any other key will force quit
+  let offset = 0; // used to update index when printing unspents
+  let prevId; // used to query for next batch
   const self = this;
 
   const internalFetchUnspents = co(function *internalFetchUnspents(str, key) {
