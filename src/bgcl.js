@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 const ArgumentParser = require('argparse').ArgumentParser;
-const bitgo = require('bitgo');
+// const bitgo = require('bitgo');
+const bitgo = require('../../BitGoJS/src/index');
+
 const pjson = require('../package.json');
 const BGCLI_VERSION = pjson.version;
 
@@ -173,6 +175,10 @@ BGCL.prototype.createArgumentParser = function createArgumentParser() {
   const coin = subparsers.addParser('coin', { help: 'Set a coin type for v2 admin routes (e.g. tbtc, btc, trmg, rmg, teth, eth, txrp, xrp, tltc, ltc)' });
   coin.addArgument(['coinType'], { nargs: '?', help: 'name of the coin to use, select from (e.g. tbtc, btc, trmg, rmg, teth, eth, txrp, xrp, tltc, ltc)' });
 
+  // fee info
+  const fee = subparsers.addParser('fee', { help: 'get fee info for a given coin, uses session coin by default' });
+  fee.addArgument(['-c', '--coin'], { help: 'the coin type to use instead of the current session coin' });
+  fee.addArgument(['-n', '--numBlocks'], { type: 'int', help: 'the number of blocks out to get the fee estimate' });
 
   /**
    * User Commands
@@ -428,6 +434,32 @@ BGCL.prototype.handleToken = co(function *handleToken(opts) {
 });
 
 /**
+ * Handle the token command, to see the current token or login using a token
+ * @param {object} opts The arguments being passed to the function
+ * @param {string} [opts.args.coin] The coin to use instead of the session coin
+ * @param {Integer} [opts.args.numBlocks] The number of blocks out to get the fee estimate
+ */
+BGCL.prototype.handleFee = co(function *handleFee(opts) {
+  const coin = opts.args.coin || opts.session.coin;
+  const params = opts.correctParams(opts.args);
+
+  if (opts.args.coin) {
+    if (!isValidCoin(opts.args.coin)) {
+      throw new Error(`${coin} is an invalid cointype for selected environment -> ${opts.bitgo.getEnv()}`);
+    }
+    delete params.coin;
+  }
+
+  const feeInfo = yield opts.bitgo.coin(coin).feeEstimate(params);
+
+  if (opts.args.json) {
+    return opts.printJSON(feeInfo);
+  }
+
+  opts.field('feePerKb', feeInfo.feePerKb.toString().bold);
+});
+
+/**
  * Handle the command to run
  * @param {Object} opts The arguments being passed to the function
  * @param {string} opts.args.cmd The command to run
@@ -448,6 +480,8 @@ BGCL.prototype.runCommandHandler = co(function *runCommandHandler(opts) {
       return userCommands.handleUser(opts);
     case 'coin':
       return this.handleCoin(opts);
+    case 'fee':
+      return this.handleFee(opts);
     default:
       throw new Error('unknown command');
   }

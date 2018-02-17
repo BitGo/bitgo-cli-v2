@@ -98,6 +98,19 @@ exports.getWalletOutput =
   'Confirmed:          1.05555095 TBTC\n' +
   'Spendable:          1.05555095 TBTC\n';
 
+exports.getFeeResponse = {
+  feePerKb: 1009,
+  cpfpFeePerKb: 1009,
+  numBlocks: 10,
+  confidence: 85,
+  multiplier: 1,
+  feeByBlockTarget: {
+    2: 1009
+  }
+};
+
+exports.getFeeOutput = 'feePerKb:           1009\n';
+
 exports.walletFreeseResponse = {
   time: '2018-01-26T01:32:31.753Z',
   expires: '2018-01-26T02:32:31.753Z'

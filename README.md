@@ -45,6 +45,8 @@ subcommands:
     token               Get or set the current auth token
     coin                Set a coin type for v2 admin routes (e.g. tbtc,
                          btc, trmg, rmg, teth, eth, txrp, xrp, tltc, ltc)
+    fee                 get fee info for a given coin, uses session coin by 
+                         default
     user                User operations (use user -h to see commands)
     wallet              Wallet operations (use wallet -h to see commands)
     address             Address operations (use address -h to see commands)
@@ -71,6 +73,30 @@ $ bg coin btc
 This will set the session coin to btc. This setting will be used by other commands that need a coin parameter.
 
 *If on testnet, make sure all coins start with t, so the command would be `bg coin tbtc` with `export BITGO_ENV=test` set or `bg -e test coin tbtc`*
+
+#### Fee
+```bash
+$ bg fee
+```
+
+It will then print out the feePerKb of the session coin
+
+```
+feePerKb:           1009
+```
+
+There are also additional flags you can pass in.
+
+short | long | description
+--- | --- | ---
+-c | --coin | The coin to use instead of the session coin
+-n | --numBlocks | The number of block to target for the fee (Only supports btc)
+
+
+```bash
+$ bg login -c btc -n 5
+```
+
 
 #### Login
 ```bash
