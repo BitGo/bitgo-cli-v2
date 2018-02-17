@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 
 const ArgumentParser = require('argparse').ArgumentParser;
-// const bitgo = require('bitgo');
-const bitgo = require('../../BitGoJS/src/index');
-
+const bitgo = require('bitgo');
 const pjson = require('../package.json');
 const BGCLI_VERSION = pjson.version;
 
