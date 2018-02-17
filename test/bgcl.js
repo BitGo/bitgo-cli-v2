@@ -61,6 +61,23 @@ describe('Base Functions:', function baseFunctions() {
     stdout.should.equal('Session coin set to: tltc\n');
   }));
 
+  it('should get fee info', co(function *getFee() {
+    nock(nockUtils.baseUrl)
+    .get('/api/v2/tbtc/tx/fee')
+    .reply(200, nockUtils.getFeeResponse);
+
+    yield cl.run(['fee', '-c', 'tbtc']);
+
+    stdout.should.equal(nockUtils.getFeeOutput);
+  }));
+
+  it('should fail to get fee info if you pass in an invalid coin', co(function *invalidCoin() {
+    yield cl.run(['fee', '-c', 'potatocoin']);
+
+    stdout.should.startWith('Error: potatocoin is an invalid cointype for selected environment -> mock');
+  }));
+
+
   it('should print that the user logged in', co(function *loginUser() {
     nock(nockUtils.baseUrl)
     .post('/api/v1/user/login', { email: 'tester@bitgo.com', password: '275e3c4197b13c5439eaf20fb2de7899b3fbc164499af287110fa7058709127a', forceSMS: false, otp: '0000000' })
