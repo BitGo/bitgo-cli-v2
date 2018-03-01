@@ -1,17 +1,25 @@
 {
-  "name": "bitgo-v2-cli",
+  "name": "bitgo-cli-v2",
   "version": "0.9.0",
   "description": "A command line tool to use BitGo's wallets with",
   "author": "BitGo Inc.",
   "license": "Apache-2.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "bin": {
-    "bitgo": "bin/bitgo"
+    "bg": "bin/bg"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node ./node_modules/mocha/bin/_mocha -t 50000 --recursive ./test --no-color",
     "lint": "./node_modules/.bin/eslint --ext .js ."
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/BitGo/bitgo-cli-v2.git"
+  },
+  "bugs": {
+    "url": "https://github.com/BitGo/bitgo-cli-v2/issues"
+  },
+  "homepage": "https://github.com/BitGo/bitgo-cli-v2",
   "keywords": [
     "bitgo",
     "bitcoin"
@@ -21,24 +29,24 @@
     "npm": ">=3.10.0"
   },
   "dependencies": {
-    "argparse": "~1.0.9",
+    "argparse": "1.0.9",
     "bignumber.js": "~6.0.0",
-    "bitgo": "~4.19.1",
+    "bitgo": "~4.21.0",
     "bluebird": "~3.5.1",
     "colors": "~1.1.2",
     "columnify": "~1.5.4",
     "external-ip": "~1.3.1",
-    "lodash": "~4.17.4",
+    "lodash": "~4.17.5",
     "moment": "~2.20.1",
     "q": "~1.5.1",
     "read": "~1.0.7",
     "underscore.string": "~3.3.4"
   },
   "devDependencies": {
-    "eslint": "~4.16.0",
+    "eslint": "~4.18.1",
     "intercept-stdout": "~0.1.2",
-    "mocha": "~5.0.0",
-    "nock": "~9.1.6",
+    "mocha": "~5.0.1",
+    "nock": "~9.2.3",
     "should": "~13.2.1"
   }
 }

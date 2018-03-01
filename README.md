@@ -94,7 +94,7 @@ short | long | description
 
 
 ```bash
-$ bg login -c btc -n 5
+$ bg fee -c btc -n 5
 ```
 
 
