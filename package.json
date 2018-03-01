@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "main": "src/index.js",
   "bin": {
-    "bg": "bin/bg"
+    "bg": "bin/bgo"
   },
   "scripts": {
     "test": "node ./node_modules/mocha/bin/_mocha -t 50000 --recursive ./test --no-color",

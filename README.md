@@ -9,7 +9,7 @@ This command line tool is used to interact with our v2 api in your native comman
 
 # Testnet
 
-By default, **bg** will use the production Bitcoin network, and will authenticate
+By default, **bgo** will use the production Bitcoin network, and will authenticate
 with **www.bitgo.com**. In order to use BitGo's test environment at **test.bitgo.com**, either use **-e test** on the command line, or set the following environment variable:
 ```bash
 $ export BITGO_ENV=test
@@ -18,15 +18,15 @@ The testnet environment is a completely separate namespace from the BitGo produc
 
 # Sessions
 
-The tool maintains one current login session per environment (prod or test). The sessions are persisted in JSON format files in **~/.bg**.  Each session maintains the user's current auth token, current coin type, and maintains a current wallet. All of the commands that operate on a wallet use this current coin and wallet context. In order to operate on a different coin or wallet, it must first be selected using the `coin [coinType]` and `wallet get [walletId]` commands.
+The tool maintains one current login session per environment (prod or test). The sessions are persisted in JSON format files in **~/.bgo**.  Each session maintains the user's current auth token, current coin type, and maintains a current wallet. All of the commands that operate on a wallet use this current coin and wallet context. In order to operate on a different coin or wallet, it must first be selected using the `coin [coinType]` and `wallet get [walletId]` commands.
 
 # Commands
 
 Run `-h` on any command or sub-command to see what subcommands and arguments can be used.
 
 ```
-$ bg -h
-usage: bg [-h] [-v] [-e ENV] [-j]
+$ bgo -h
+usage: bgo [-h] [-v] [-e ENV] [-j]
           {login,logout,token,coin,user,wallet,address} ...
 
 BitGo Command Line Tool
@@ -67,16 +67,16 @@ These commands are for setting the state of the __bg__ cli tool.
 
 #### Coin
 ```bash
-$ bg coin btc
+$ bgo coin btc
 ```
 
 This will set the session coin to btc. This setting will be used by other commands that need a coin parameter.
 
-*If on testnet, make sure all coins start with t, so the command would be `bg coin tbtc` with `export BITGO_ENV=test` set or `bg -e test coin tbtc`*
+*If on testnet, make sure all coins start with t, so the command would be `bgo coin tbtc` with `export BITGO_ENV=test` set or `bgo -e test coin tbtc`*
 
 #### Fee
 ```bash
-$ bg fee
+$ bgo fee
 ```
 
 It will then print out the feePerKb of the session coin
@@ -94,13 +94,13 @@ short | long | description
 
 
 ```bash
-$ bg fee -c btc -n 5
+$ bgo fee -c btc -n 5
 ```
 
 
 #### Login
 ```bash
-$ bg login
+$ bgo login
 ```
 
 It will then ask you for your email, password, and 2fa code.
@@ -123,20 +123,20 @@ short | long | description
 
 
 ```bash
-$ bg login -u example@bitgo.com -p ********* -o 0000000
+$ bgo login -u example@bitgo.com -p ********* -o 0000000
 ```
 
 #### Logout
 ```bash
-$ bg logout
+$ bgo logout
 ```
 
 This will log the user out of the current session, making other commands fail due to not being logged in.
 
 ## User Commands
 ```
-$ bg user -h
-usage: bg user [-h] {get,wallets} ...
+$ bgo user -h
+usage: bgo user [-h] {get,wallets} ...
 
 Optional arguments:
   -h, --help     Show this help message and exit.
@@ -151,7 +151,7 @@ user commands:
 
 #### get
 ```bash
-$ bg user get
+$ bgo user get
 ```
 
 Use this command to see the currently logged in username and Id.
@@ -163,7 +163,7 @@ Username:  tester@bitgo.com
 
 #### wallets
 ```bash
-$ bg user wallets -l 3
+$ bgo user wallets -l 3
 ```
 
 It will print a list of wallets for the current session coin and logged in user.
@@ -185,8 +185,8 @@ short | long | description
 
 ## Wallet Commands
 ```
-$ bg wallet -h
-usage: bg wallet [-h]
+$ bgo wallet -h
+usage: bgo wallet [-h]
                  
                  {get,transfer,transferlist,unspents,sendtoaddress,consolidate,fanout,unlock,lock,freeze}
                  ...
@@ -210,7 +210,7 @@ wallet commands:
 
 #### get
 ```bash
-$ bg wallet get 5a1341e7c8421dc90710673b3166bbd5
+$ bgo wallet get 5a1341e7c8421dc90710673b3166bbd5
 ```
 
 Use this command to view information on a wallet of the coin type the session coin is set to, and make that wallet the current session wallet.
@@ -226,7 +226,7 @@ Spendable:          0.00406647 TBTC
 
 #### transfer
 ```bash
-$ bg wallet transfer 5a1341e7c8421dc90710673b3166bbd5
+$ bgo wallet transfer 5a1341e7c8421dc90710673b3166bbd5
 ```
 
 Use this command to view information on a transfer. You can pass in the transfer id or the txid.
@@ -242,7 +242,7 @@ State:              confirmed
 
 #### transferlist
 ```bash
-$ bg wallet transferlist -l 3
+$ bgo wallet transferlist -l 3
 ```
 
 It will print a list of transfers for the current session wallet.
@@ -264,7 +264,7 @@ short | long | description
 
 #### unspents
 ```bash
-$ bg wallet unspents -l 3
+$ bgo wallet unspents -l 3
 ```
 
 It will print a list of unspents for the current session wallet.
@@ -292,12 +292,12 @@ short | long | description
 -c | --minConfirms  | Ignores unspents that have fewer than the given confirmations
 
 ```bash
-$ bg wallet unspents -l 3 -s 10000 -m 200000000 -g 23412 -c 1 -b
+$ bgo wallet unspents -l 3 -s 10000 -m 200000000 -g 23412 -c 1 -b
 ```
 
 #### unlock
 ```bash
-$ bg wallet unlock 0000000
+$ bgo wallet unlock 0000000
 ```
 
 Use this command to unlock the current session wallet to allow spending funds with other commands.
@@ -305,14 +305,14 @@ Use this command to unlock the current session wallet to allow spending funds wi
 
 #### lock
 ```bash
-$ bg wallet lock
+$ bgo wallet lock
 ```
 
 Use this command to lock the current session wallet so funds can't leave the wallet until another unlock.
 
 #### freeze
 ```bash
-$ bg wallet freeze -d 100
+$ bgo wallet freeze -d 100
 ```
 
 Use this command to freeze current session wallet so funds can't leave the wallet until the freeze is over.
@@ -326,7 +326,7 @@ short | long | description
 
 #### sendtoaddress
 ```bash
-$ bg wallet sendtoaddress
+$ bgo wallet sendtoaddress
 ```
 
 It will send funds to the destination address.
@@ -368,7 +368,7 @@ short | long | description
 
 #### consolidate
 ```bash
-$ bg wallet consolidate
+$ bgo wallet consolidate
 ```
 
 It will create, sign and send a consolidation transaction for the current session wallet.
@@ -400,7 +400,7 @@ short | long | description
 
 #### fanout
 ```bash
-$ bg wallet fanout
+$ bgo wallet fanout
 ```
 
 It will create, sign and send a fanout transaction for the current session wallet.
@@ -431,8 +431,8 @@ short | long | description
 
 ## Address Commands
 ```
-$ bg address -h
-usage: bg address [-h] {get,list,newaddress} ...
+$ bgo address -h
+usage: bgo address [-h] {get,list,newaddress} ...
 
 Optional arguments:
   -h, --help            Show this help message and exit.
@@ -446,7 +446,7 @@ address commands:
 
 #### get
 ```bash
-$ bg address get 2MuUXDK2sRKdBTrruXi9kZNBymrAmBsqhez
+$ bgo address get 2MuUXDK2sRKdBTrruXi9kZNBymrAmBsqhez
 ```
 
 Use this command to view information on an address on the current session wallet.
@@ -475,7 +475,7 @@ Use this command to view information on an address on the current session wallet
 
 #### list
 ```bash
-$ bg address list -l 3
+$ bgo address list -l 3
 ```
 
 It will print a list of addresses for the current session wallet.
@@ -497,7 +497,7 @@ short | long | description
 
 #### newaddress
 ```bash
-$ bg address newaddress
+$ bgo address newaddress
 ```
 
 It will create a new recieve address on the current session wallet.
@@ -554,7 +554,7 @@ short | long | description
 
 # Developing
 
-For developers on bitgo-v2-cli, the following must be run in the installation directory before writing new code.
+For developers on bitgo-cli-v2, the following must be run in the installation directory before writing new code.
 ```bash
 $ npm install
 ```
