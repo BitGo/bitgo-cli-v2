@@ -8,7 +8,7 @@ function getUserHome() {
   return process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
 }
 
-const BITGO_DIR = getUserHome() + '/.bg';
+const BITGO_DIR = getUserHome() + '/.bgo';
 
 /**
  * Get the full file path

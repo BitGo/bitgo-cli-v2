@@ -2999,7 +2999,7 @@ exports.getLoginResponse = {
   encryptedECDHXprv: '{"iv":"WGZvnRYDD202r7HIpdtdIw==","v":1,"iter":10000,"ks":256,"ts":64,"mode":"ccm","adata":"","cipher":"aes","salt":"LvZcOyOtQQk=","ct":"1z4nS3G604Q2OtaeugTSBiFI6dggqH2IN9w3iin+nxeMy19SYQ8tfyG1VEguhJs3TqgILo10lujT3oO3Nn5QSf9xIwX3Foct3F32EEUmpyqXGJyp7/8WhO084Fh76GnfI95Fqd113+p1ND1FQ1JlFRRrAitb45g="}'
 };
 
-// bg wallet sendtoaddress -a 10000 -d 2NFfxvXpAWjKng7enFougtvtxxCJ2hQEMo4 -p fakepass -c message --confirm
+// bgo wallet sendtoaddress -a 10000 -d 2NFfxvXpAWjKng7enFougtvtxxCJ2hQEMo4 -p fakepass -c message --confirm
 exports.sendToAddressResponse = {
   txid: '47393f92cc61d5e805c3c694db91e27b09995aa314b078136c2f7d52e7dc2168',
   tx: '01000000017eb050bbe70e8b3cf9680474d6961dd963c5cf20474d47db172b400c52013c7301000000fdfe0000483045022100da1fb7ffd7d303b970aa5ceb934193d9b467512133e063df65b38b61b27757e40220471fec37e680c402ab2574a2bb7ec0bbfc9dd93b5e4b2d3efca46b62237d7e0201483045022100f7cebf69f3d5aab314934fa31340e7f2d0ea120774f9974d225979ce1201cdaf02203d81e165f9714cc3f03fb8968ab4304a0da43ba5be118a55c73eca0339657d24014c695221022c3e899182fe6893ce54dfa3b60a4698e13abe1b1a23663a1ef7c476ab4965312102270dd4776970def64ef5a363502140f913d45dbf12b1744e1c94e5abd81f126b2103d314ace4555ebbdecc31f6be5552a73b10ca60170f69c8faeb6083e34b838c4953aeffffffff0250c300000000000017a914ba51ea4ab0a6704b119297d8de51330168da1a23877d4ac4010000000017a91498ef083d01a51be16fd315ea9fb1eb723d010e3d8700000000',
@@ -3011,7 +3011,7 @@ exports.sendToAddressOutput =
   '\n' +
   'txid:      47393f92cc61d5e805c3c694db91e27b09995aa314b078136c2f7d52e7dc2168';
 
-// bg address list -l 3
+// bgo address list -l 3
 exports.addressListResponse = {
   coin: 'tbtc',
   nextBatchPrevId: '5a1daa9c20bea6b8070b2a42e9f89c32',
