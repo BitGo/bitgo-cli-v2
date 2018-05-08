@@ -1,12 +1,16 @@
 BitGo cli v2
 =======
-
-Command line interface for our v2 api.
-
 # Overview
 
-This command line tool is used to interact with our v2 api in your native command line program. You can use it to view information on your wallets, view balances, send from a wallet to an address and more. Examples will be provided below.
+This command line tool is used to interact with our v2 api in your native command line program. You can use it to view information on your wallets, view balances, send from a wallet to an address and more. Examples are provided below.
 
+# Installation
+
+**NodeJS must be installed as a prerequisite.**
+```bash
+$ npm install -g bitgo-cli-v2
+```
+          
 # Testnet
 
 By default, **bgo** will use the production Bitcoin network, and will authenticate
