@@ -573,11 +573,14 @@ There are also additional flags you can pass in.
 short | long | description
 --- | --- | ---
 -c | --coin | The coin to use instead of the session coin
+-s | --seed | The seed to use to generate the key pair. Random by default
 
 
 ```bash
-$ bgo newkey -c algo
+$ bgo newkey -c algo -s abc1239azae1ab2b12e8f754zda2384e8wa3b1a92w7a616ce3758811985b15d8
 ```
+
+Note: this seed is invalid and will throw,so don't use it!
 
 # Developing
 

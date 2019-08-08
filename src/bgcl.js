@@ -308,6 +308,7 @@ BGCL.prototype.createArgumentParser = function createArgumentParser() {
    */
   const newKey = subparsers.addParser('newkey', { help: 'Create a new key pair' });
   newKey.addArgument(['-c', '--coin'], { help: 'the coin type to use instead of the current session coin' });
+  newKey.addArgument(['-s', '--seed'], { help: 'the seed in hexadecimal to generate the key pair for. Random by default' });
 
   /* eslint-enable no-unused-vars */
   return parser;
@@ -480,15 +481,21 @@ BGCL.prototype.handleNewKey = co(function *handleFee(opts) {
     delete params.coin;
   }
 
-  const seed = crypto.randomBytes(32);
-  const newKey = opts.bitgo.coin(coin).generateKeyPair(seed);
+  try {
+    const seed = (opts.args.seed) ? Buffer.from(opts.args.seed, 'hex') : crypto.randomBytes(32);
+    const newKey = opts.bitgo.coin(coin).generateKeyPair(seed);
 
-  if (opts.args.json) {
-    return opts.printJSON(newKey);
+    if (opts.args.json) {
+      newKey.seed = seed.toString('hex');
+      return opts.printJSON(newKey);
+    }
+
+    opts.field('Public Key', newKey.pub.toString().bold);
+    opts.field('Private Key', newKey.prv.toString().bold);
+    opts.field('Seed', seed.toString('hex').bold);
+  } catch (err) {
+    throw new Error('error generating new key. Invalid seed?');
   }
-
-  opts.field('Public Key', newKey.pub.toString().bold);
-  opts.field('Private Key', newKey.prv.toString().bold);
 });
 
 /**
