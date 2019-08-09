@@ -7,6 +7,7 @@ require('should');
 const bg = require('../src/bgcl');
 const cl = new bg();
 const Session = require('../src/session');
+const should = require('should');
 
 
 describe('Base Functions:', function baseFunctions() {
@@ -100,5 +101,19 @@ describe('Base Functions:', function baseFunctions() {
     yield cl.run(['logout']);
 
     stdout.should.equal('Logged out\n');
+  }));
+
+  it('should print a new key pair for Algorand', co(function *newKey() {
+    yield cl.run(['-j', 'newkey', '-c', 'talgo']);
+
+    should.exists(JSON.parse(stdout).pub);
+    should.exists(JSON.parse(stdout).prv);
+  }));
+
+  it('should print a new key pair for Bitcoin', co(function *newKey() {
+    yield cl.run(['-j', 'newkey', '-c', 'tbtc']);
+
+    should.exists(JSON.parse(stdout).pub);
+    should.exists(JSON.parse(stdout).prv);
   }));
 });

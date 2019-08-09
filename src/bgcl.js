@@ -12,6 +12,7 @@ _.string = require('underscore.string');
 const EventEmitter = require('events').EventEmitter;
 const getIP = Promise.promisify(require('external-ip')());
 require('colors');
+const crypto = require('crypto');
 
 const Session = require('./session');
 const UserInput = require('./UserInput');
@@ -25,8 +26,8 @@ const addressCommands = new AddressCommands();
 
 // Todo: update as we add new coins and erc support
 const validCoins = {
-  bitcoin: new Set(['btc', 'bch', 'eth', 'ltc', 'btg', 'rmg', 'xrp']),
-  testnet: new Set(['tbtc', 'tbch', 'teth', 'tltc', 'tbtg', 'trmg', 'txrp'])
+  bitcoin: new Set(['btc', 'bch', 'eth', 'ltc', 'btg', 'rmg', 'xrp', 'algo']),
+  testnet: new Set(['tbtc', 'tbch', 'teth', 'tltc', 'tbtg', 'trmg', 'txrp', 'talgo'])
 };
 
 /**
@@ -302,6 +303,13 @@ BGCL.prototype.createArgumentParser = function createArgumentParser() {
   const newAddress = addressCommands.addParser('newaddress', { help: 'Create a new receive address for the current wallet' });
   newAddress.addArgument(['-c', '--change'], { action: 'storeTrue', help: 'create a change address' });
 
+  /**
+   * New key
+   */
+  const newKey = subparsers.addParser('newkey', { help: 'Create a new key pair' });
+  newKey.addArgument(['-c', '--coin'], { help: 'the coin type to use instead of the current session coin' });
+  newKey.addArgument(['-s', '--seed'], { help: 'the seed in hexadecimal to generate the key pair for. Random by default' });
+
   /* eslint-enable no-unused-vars */
   return parser;
 };
@@ -458,6 +466,39 @@ BGCL.prototype.handleFee = co(function *handleFee(opts) {
 });
 
 /**
+ * Create a new key pair for the given key
+ * @param {object} opts The arguments being passed to the function
+ * @param {string} [opts.args.coin] The coin to use instead of the session coin
+ */
+BGCL.prototype.handleNewKey = co(function *handleFee(opts) {
+  const coin = opts.args.coin || opts.session.coin;
+  const params = opts.correctParams(opts.args);
+
+  if (opts.args.coin) {
+    if (!isValidCoin(opts.args.coin)) {
+      throw new Error(`${coin} is an invalid cointype for selected environment -> ${opts.bitgo.getEnv()}`);
+    }
+    delete params.coin;
+  }
+
+  try {
+    const seed = (opts.args.seed) ? Buffer.from(opts.args.seed, 'hex') : crypto.randomBytes(32);
+    const newKey = opts.bitgo.coin(coin).generateKeyPair(seed);
+
+    if (opts.args.json) {
+      newKey.seed = seed.toString('hex');
+      return opts.printJSON(newKey);
+    }
+
+    opts.field('Public Key', newKey.pub.toString().bold);
+    opts.field('Private Key', newKey.prv.toString().bold);
+    opts.field('Seed', seed.toString('hex').bold);
+  } catch (err) {
+    throw new Error('error generating new key. Invalid seed?');
+  }
+});
+
+/**
  * Handle the command to run
  * @param {Object} opts The arguments being passed to the function
  * @param {string} opts.args.cmd The command to run
@@ -480,6 +521,8 @@ BGCL.prototype.runCommandHandler = co(function *runCommandHandler(opts) {
       return this.handleCoin(opts);
     case 'fee':
       return this.handleFee(opts);
+    case 'newkey':
+      return this.handleNewKey(opts);
     default:
       throw new Error('unknown command');
   }

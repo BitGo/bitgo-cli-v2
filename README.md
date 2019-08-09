@@ -31,29 +31,30 @@ Run `-h` on any command or sub-command to see what subcommands and arguments can
 ```
 $ bgo -h
 usage: bgo [-h] [-v] [-e ENV] [-j]
-          {login,logout,token,coin,user,wallet,address} ...
+           {login,logout,token,coin,fee,user,wallet,address,newkey} ...
 
 BitGo Command Line Tool
 
 Optional arguments:
   -h, --help            Show this help message and exit.
   -v, --version         Show program's version number and exit.
-  -e ENV, --env ENV     BitGo environment to use: prod (default) or test. Can 
+  -e ENV, --env ENV     BitGo environment to use: prod (default) or test. Can
                         also be set with the BITGO_ENV environment variable.
   -j, --json            output JSON (if available)
 
 subcommands:
-  {login,logout,token,coin,user,wallet,address}
+  {login,logout,token,coin,fee,user,wallet,address,newkey}
     login               Sign in to BitGo
     logout              Sign out of BitGo
     token               Get or set the current auth token
-    coin                Set a coin type for v2 admin routes (e.g. tbtc,
-                         btc, trmg, rmg, teth, eth, txrp, xrp, tltc, ltc)
-    fee                 get fee info for a given coin, uses session coin by 
-                         default
+    coin                Set a coin type for v2 admin routes (e.g. tbtc, btc,
+                        trmg, rmg, teth, eth, txrp, xrp, tltc, ltc, talgo, algo)
+    fee                 get fee info for a given coin, uses session coin by
+                        default
     user                User operations (use user -h to see commands)
     wallet              Wallet operations (use wallet -h to see commands)
     address             Address operations (use address -h to see commands)
+    newkey              Create a new key pair
 
 ```
 
@@ -555,6 +556,31 @@ short | long | description
 --- | --- | ---
 -c | --change | Set this flag to make the new address a change address
 
+#### New Key Pair
+```bash
+$ bgo newkey
+```
+
+It will generate a random key and then print it out using the coin in the current session, in this case, Algorand
+
+```
+Public Key:         GJEHL4M5HWMY2R6ROA6MWENP6ESDDG2TWTM7YGQEKZYMVN3E7X7CS7RP4M
+Private Key:        ABCDABCDABCDABCDABCDABCDABCDABCDABCDABCDABCDABCDABCDABCDAB
+```
+
+There are also additional flags you can pass in.
+
+short | long | description
+--- | --- | ---
+-c | --coin | The coin to use instead of the session coin
+-s | --seed | The seed to use to generate the key pair. Random by default
+
+
+```bash
+$ bgo newkey -c algo -s abc1239azae1ab2b12e8f754zda2384e8wa3b1a92w7a616ce3758811985b15d8
+```
+
+Note: this seed is invalid and will throw,so don't use it!
 
 # Developing
 
