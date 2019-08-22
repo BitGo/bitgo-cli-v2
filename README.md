@@ -47,8 +47,8 @@ subcommands:
     login               Sign in to BitGo
     logout              Sign out of BitGo
     token               Get or set the current auth token
-    coin                Set a coin type for v2 admin routes (e.g. tbtc, btc,
-                        trmg, rmg, teth, eth, txrp, xrp, tltc, ltc, talgo, algo)
+    coin                Set a coin type for v2 admin routes (e.g. tbtc, btc, trmg, rmg,
+                        teth, eth, txrp, xrp, tltc, ltc, talgo, algo, teos, eos)
     fee                 get fee info for a given coin, uses session coin by
                         default
     user                User operations (use user -h to see commands)

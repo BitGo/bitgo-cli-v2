@@ -26,8 +26,8 @@ const addressCommands = new AddressCommands();
 
 // Todo: update as we add new coins and erc support
 const validCoins = {
-  bitcoin: new Set(['btc', 'bch', 'eth', 'ltc', 'btg', 'rmg', 'xrp', 'algo']),
-  testnet: new Set(['tbtc', 'tbch', 'teth', 'tltc', 'tbtg', 'trmg', 'txrp', 'talgo'])
+  bitcoin: new Set(['btc', 'bch', 'eth', 'ltc', 'btg', 'rmg', 'xrp', 'algo', 'eos']),
+  testnet: new Set(['tbtc', 'tbch', 'teth', 'tltc', 'tbtg', 'trmg', 'txrp', 'talgo', 'teos'])
 };
 
 /**

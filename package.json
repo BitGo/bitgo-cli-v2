@@ -1,6 +1,6 @@
 {
   "name": "bitgo-cli-v2",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "A command line tool to use BitGo's wallets with",
   "author": "BitGo Inc.",
   "license": "Apache-2.0",
