@@ -249,7 +249,7 @@ BGCL.prototype.createArgumentParser = function createArgumentParser() {
   consolidateUnspents.addArgument(['-m', '--maxValue'], { type: 'int', help: 'maximum size unspent in BTC to consolidate' });
   consolidateUnspents.addArgument(['-s', '--minValue'], { type: 'int', help: 'minimum size unspent in satoshis to consolidate' });
   consolidateUnspents.addArgument(['-g', '--minHeight'], { type: 'int', help: 'minimum height of unspents on the block chain to use' });
-  consolidateUnspents.addArgument(['-p', '--password'], { type: 'string', help: 'password to use for signing' });
+  consolidateUnspents.addArgument(['-p', '--walletPassphrase'], { type: 'string', help: 'password to use for signing' });
   consolidateUnspents.addArgument(['-c', '--minConfirms'], { type: 'int', help: 'only select unspents with at least this many confirmations' });
   consolidateUnspents.addArgument(['-e', '--enforceMinConfirmsForChange'], { action: 'storeTrue', nargs: 0, help: 'Should change outputs should respect the minConfirms parameter' });
   consolidateUnspents.addArgument(['-r', '--maxFeePercentage'], { type: 'int', help: 'Maximum percentage of an unspent’s value to be used for fees. Cannot be combined with minValue' });
