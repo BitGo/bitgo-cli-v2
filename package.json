@@ -31,7 +31,7 @@
   "dependencies": {
     "argparse": "1.0.9",
     "bignumber.js": "~6.0.0",
-    "bitgo": "^7.0.0",
+    "bitgo": "^11.17.0",
     "bluebird": "~3.5.1",
     "colors": "~1.1.2",
     "columnify": "~1.5.4",
